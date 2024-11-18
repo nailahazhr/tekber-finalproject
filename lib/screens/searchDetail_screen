@@ -1,0 +1,300 @@
+import 'package:flutter/material.dart';
+import '../constants/colors.dart';
+
+class SearchdetailScreen extends StatefulWidget {
+  SearchdetailScreen({Key? key, this.title}) : super(key: key);
+
+  final String? title;
+
+  @override
+  State<SearchdetailScreen> createState() => SearchdetailScreenState();
+}
+
+class SearchdetailScreenState extends State<SearchdetailScreen> {
+  
+  Widget _nilaiGizi1() {
+    return Card(
+      color: const Color(0xFFF0FFF0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8), 
+      ),
+      child: const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center, 
+              children: [
+                Text(
+                  "Kalori",
+                  style: TextStyle(
+                    color: tPrimaryColor, 
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  "180 kkal",
+                   // recipe.kalori,
+                  style: TextStyle(
+                    color: tThirdColor, 
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center, 
+              children: [
+                Text(
+                  "Karbohidrat",
+                  style: TextStyle(
+                    color: tPrimaryColor, 
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  "39.8 g",
+                   // recipe.kalori,
+                  style: TextStyle(
+                    color: tThirdColor, 
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center, 
+              children: [
+                Text(
+                  "Protein",
+                  style: TextStyle(
+                    color: tPrimaryColor, 
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  "3 g",
+                   // recipe.kalori,
+                  style: TextStyle(
+                    color: tThirdColor, 
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _nilaiGizi2() {
+    return Card(
+      color: const Color(0xFFF0FFF0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8), 
+      ),
+      child: const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,  
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center, 
+              children: [
+                Text(
+                  "Lemak",
+                  style: TextStyle(
+                    color: tPrimaryColor, 
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  "0.3 g",
+                   // recipe.kalori,
+                  style: TextStyle(
+                    color: tThirdColor, 
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center, 
+              children: [
+                Text(
+                  "Gula",
+                  style: TextStyle(
+                    color: tPrimaryColor, 
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  "0.3 g",
+                   // recipe.kalori,
+                  style: TextStyle(
+                    color: tThirdColor, 
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center, 
+              children: [
+                Text(
+                  "Garam",
+                  style: TextStyle(
+                    color: tPrimaryColor, 
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  "1 mg",
+                   // recipe.kalori,
+                  style: TextStyle(
+                    color: tThirdColor, 
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _submitButton() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 15),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(15)),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Colors.grey.shade200,
+                offset: Offset(2, 4),
+                blurRadius: 5,
+                spreadRadius: 2)
+          ],
+          color: tThirdColor),
+      child: Text(
+        'Tambah',
+        style: TextStyle(fontSize: 20, color: tWhiteColor, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _Label() {
+    return InkWell(
+      // onTap: () {
+      //   Navigator.push(
+      //       context, MaterialPageRoute(builder: (context) => LoginPage()));
+      // },
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 20),
+        // padding: EdgeInsets.all(15),
+        alignment: Alignment.bottomCenter,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Tambah',
+              style: TextStyle(color: tGreyColor, fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            SizedBox(
+              width: 4,
+            ),
+            Text(
+              'Poin',
+              style: TextStyle(
+                  color: tSecondaryColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600),
+            ),
+            Text(
+              ', Nikmati Langganan Premium!',
+              style: TextStyle(color: tGreyColor, fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Nasi Putih", 
+          style: const TextStyle(
+            color: tThirdColor,
+            fontWeight: FontWeight.bold)),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              //Gambar
+              Container(
+                height: 250,
+                decoration: ShapeDecoration(
+                  image: DecorationImage(
+                      image: NetworkImage("https://upload.wikimedia.org/wikipedia/commons/2/2d/Nasi_dibentuk_bulat.jpg"),
+                      fit: BoxFit.fill,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+              
+              const SizedBox(height: 24),
+              
+              // Subtitle
+              const SizedBox(
+                width: double.infinity,
+                child: Text(
+                  'Informasi Nilai Gizi',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: tThirdColor,
+                    fontSize: 20,
+                    fontFamily: 'Signika',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              
+              SizedBox(height: 20),
+              _nilaiGizi1(),
+              SizedBox(height: 16),
+              _nilaiGizi2(),
+              SizedBox(height: 30),
+              _submitButton(),
+              _Label(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
