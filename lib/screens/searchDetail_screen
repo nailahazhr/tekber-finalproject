@@ -241,6 +241,7 @@ class SearchdetailScreenState extends State<SearchdetailScreen> {
     return Scaffold(
       backgroundColor: tWhiteColor,
       appBar: AppBar(
+        backgroundColor: tWhiteColor,
         title: Text(
           "Nasi Putih", 
           style: const TextStyle(
