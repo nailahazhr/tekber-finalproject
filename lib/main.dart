@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ns_apps/screens/splash_screen.dart';
+import 'package:ns_apps/screens/personalisasi_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Splashscreen(),
+      home: PersonalisasiScreen(),
     );
   }
 }
