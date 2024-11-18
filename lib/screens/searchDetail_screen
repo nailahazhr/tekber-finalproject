@@ -239,6 +239,7 @@ class SearchdetailScreenState extends State<SearchdetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: tWhiteColor,
       appBar: AppBar(
         title: Text(
           "Nasi Putih", 
