@@ -1,182 +1,104 @@
 import 'package:flutter/material.dart';
 import '../constants/colors.dart';
+import 'package:ns_apps/model/product_model.dart';
+import 'package:ns_apps/constants/product_data.dart'; 
 
 class SearchdetailScreen extends StatefulWidget {
-  SearchdetailScreen({Key? key, this.title}) : super(key: key);
-
-  final String? title;
+  SearchdetailScreen({Key? key}) : super(key: key);
 
   @override
   State<SearchdetailScreen> createState() => SearchdetailScreenState();
 }
 
 class SearchdetailScreenState extends State<SearchdetailScreen> {
-  
-  Widget _nilaiGizi1() {
-    return Card(
-      color: const Color(0xFFF0FFF0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8), 
-      ),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 28, vertical: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, 
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center, 
-              children: [
-                Text(
-                  "Kalori",
-                  style: TextStyle(
-                    color: tPrimaryColor, 
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  "180 kkal",
-                   // recipe.kalori,
-                  style: TextStyle(
-                    color: tThirdColor, 
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center, 
-              children: [
-                Text(
-                  "Karbohidrat",
-                  style: TextStyle(
-                    color: tPrimaryColor, 
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  "39.8 g",
-                   // recipe.kalori,
-                  style: TextStyle(
-                    color: tThirdColor, 
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center, 
-              children: [
-                Text(
-                  "Protein",
-                  style: TextStyle(
-                    color: tPrimaryColor, 
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  "3 g",
-                   // recipe.kalori,
-                  style: TextStyle(
-                    color: tThirdColor, 
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ],
+  final GiziProduk data = giziProdukList[0];
+
+  Widget _image() {
+    return Container(
+      height: 250,
+      decoration: ShapeDecoration(
+        image: DecorationImage(
+          image: NetworkImage(data.imageUrl),
+          fit: BoxFit.fill,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
         ),
       ),
     );
   }
 
-  Widget _nilaiGizi2() {
-    return Card(
-      color: const Color(0xFFF0FFF0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8), 
-      ),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,  
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center, 
-              children: [
-                Text(
-                  "Lemak",
-                  style: TextStyle(
-                    color: tPrimaryColor, 
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  "0.3 g",
-                   // recipe.kalori,
-                  style: TextStyle(
-                    color: tThirdColor, 
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center, 
-              children: [
-                Text(
-                  "Gula",
-                  style: TextStyle(
-                    color: tPrimaryColor, 
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  "0.3 g",
-                   // recipe.kalori,
-                  style: TextStyle(
-                    color: tThirdColor, 
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center, 
-              children: [
-                Text(
-                  "Garam",
-                  style: TextStyle(
-                    color: tPrimaryColor, 
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  "1 mg",
-                   // recipe.kalori,
-                  style: TextStyle(
-                    color: tThirdColor, 
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ],
+  Widget _infoGizi() {
+  List<String> titles = ['Kalori', 'Karbohidrat', 'Protein', 'Lemak', 'Gula', 'Garam'];
+  List<String> values = [
+    data.kalori,
+    data.karbohidrat,
+    data.protein,
+    data.lemak,
+    data.gula,
+    data.garam,
+  ];
+
+  return Column(
+    children: [
+      SizedBox(
+        width: double.infinity,
+        child: Text(
+          'Informasi Nilai Gizi',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: tThirdColor,
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
-    );
-  }
+      SizedBox(height: 20),
+      for (int i = 0; i < titles.length; i += 3)...[
+        Card(
+          color: const Color(0xFFF0FFF0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: i == 0 ? 28 : 40,
+              vertical: 12,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                for (int j = i; j < i + 3 && j < titles.length; j++)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        titles[j],
+                        style: TextStyle(
+                          color: tPrimaryColor,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        values[j],
+                        style: TextStyle(
+                          color: tThirdColor,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ),
+        ),
+        if (i < titles.length - 3) SizedBox(height: 16),
+      ],
+    ],
+  );
+}
 
   Widget _submitButton() {
     return Container(
@@ -239,11 +161,11 @@ class SearchdetailScreenState extends State<SearchdetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: tWhiteColor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: tWhiteColor,
+        backgroundColor: Colors.white,
         title: Text(
-          "Nasi Putih", 
+          data.title, 
           style: const TextStyle(
             color: tThirdColor,
             fontWeight: FontWeight.bold)),
@@ -256,40 +178,9 @@ class SearchdetailScreenState extends State<SearchdetailScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               //Gambar
-              Container(
-                height: 250,
-                decoration: ShapeDecoration(
-                  image: DecorationImage(
-                      image: NetworkImage("https://upload.wikimedia.org/wikipedia/commons/2/2d/Nasi_dibentuk_bulat.jpg"),
-                      fit: BoxFit.fill,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
-              
-              const SizedBox(height: 24),
-              
-              // Subtitle
-              const SizedBox(
-                width: double.infinity,
-                child: Text(
-                  'Informasi Nilai Gizi',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: tThirdColor,
-                    fontSize: 20,
-                    fontFamily: 'Signika',
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-              
-              SizedBox(height: 20),
-              _nilaiGizi1(),
-              SizedBox(height: 16),
-              _nilaiGizi2(),
+              _image(),
+              SizedBox(height: 24),
+              _infoGizi(),
               SizedBox(height: 30),
               _submitButton(),
               _Label(),
