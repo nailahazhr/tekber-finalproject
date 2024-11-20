@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ns_apps/screens/splash_screen.dart';
 import 'package:ns_apps/screens/personalisasi_screen.dart';
+import 'package:ns_apps/screens/home_page.dart';
+import 'package:ns_apps/screens/login_screen.dart';
+import 'package:ns_apps/screens/signup_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,6 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -35,7 +39,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: PersonalisasiScreen(),
+      home: const Splashscreen(), // Initially display the splash screen
+      routes: {
+        '/personalization': (context) => PersonalisasiScreen(),
+        '/home': (context) => HomePage(),
+        '/login': (context) => LoginScreen(),
+        '/signup': (context) => SignUpScreen(),
+      }
     );
   }
 }

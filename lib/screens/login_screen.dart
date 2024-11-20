@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ns_apps/screens/home_page.dart';
 import 'package:ns_apps/screens/signup_screen.dart';
 import '../constants/colors.dart';
 import '../constants/images.dart';
@@ -176,25 +177,37 @@ class _LoginScreenState extends State<LoginScreen> {  // Changed state class nam
 
 
   Widget _submitButton() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 15),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
+    return GestureDetector(
+      onTap: () {
+        // Navigate to HomeScreen after login
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 15),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(15)),
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
+              color: Colors.grey.shade200,
+              offset: Offset(2, 4),
+              blurRadius: 5,
+              spreadRadius: 2,
+            ),
           ],
-          color: tThirdColor),
-      child: Text(
-        'Masuk',
-        style: TextStyle(fontSize: 20, color: Colors.white),
+          color: tThirdColor,
+        ),
+        child: Text(
+          'Masuk',
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
       ),
     );
   }
+
   Widget _createAccountLabel() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 20),
