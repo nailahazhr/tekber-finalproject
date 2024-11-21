@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ns_apps/screens/personalisasi_screen.dart';
+import 'package:ns_apps/screens/searchDetail_screen.dart';
 import '../constants/colors.dart';
 import '../constants/images.dart';
 
@@ -8,12 +9,27 @@ class HomePage extends StatelessWidget {
 
   // Fungsi untuk menangani perubahan halaman pada bottom navigation bar
   void _onItemTapped(BuildContext context, int index) {
-    if (index == 1) {
-      // Navigasi ke PersonalisasiScreen ketika ikon profil dipilih
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PersonalisasiScreen()),
-      );
+    switch (index) {
+      case 0:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+        break;
+      case 1:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => SearchdetailScreen()),
+        );
+        break;
+      case 2:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PersonalisasiScreen()),
+        );
+        break;
+      default:
+        return;
     }
   }
 
@@ -22,16 +38,24 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green,
-        title: Text(
-          'Halo Hasna',
-          style: TextStyle(
-            fontSize: 20,
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.bold,
-          ),
+        title: Row(
+          children: [
+            Icon(Icons.front_hand, color: Colors.yellow),
+            SizedBox(width: 8),
+            Text(
+              'Halo Hasna',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(width: 8),
+          ],
         ),
         actions: [
-          IconButton(icon: Icon(Icons.menu), onPressed: () {}),
+          IconButton(icon: Icon(Icons.menu, color: Colors.white), onPressed: () {}),
         ],
       ),
       body: SingleChildScrollView(
@@ -39,28 +63,35 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Ayo lengkapi nutrisi hari ini!'),
+            Text(
+              'Ayo lengkapi nutrisi kamu hari ini!',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+            ),
             SizedBox(height: 20),
             _buildSearchBar(),
             SizedBox(height: 20),
             _buildNutritionStats(),
             SizedBox(height: 20),
-            Text('Artikel',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            _buildSectionHeader('Artikel', Icons.article),
+            SizedBox(height: 8),
             _buildArticles(),
             SizedBox(height: 20),
-            _buildMealSection('Sarapan'),
-            _buildMealSection('Makan Siang'),
-            _buildMealSection('Makan Malam'),
+            _buildSectionHeader('Sarapan', Icons.free_breakfast),
+            _buildMealSection(),
+            SizedBox(height: 20),
+            _buildSectionHeader('Makan Siang', Icons.lunch_dining),
+            _buildMealSection(),
+            SizedBox(height: 20),
+            _buildSectionHeader('Makan Malam', Icons.bakery_dining_outlined),
+            _buildMealSection(),
           ],
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'Calendar'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today), label: 'Calendar'),
         ],
         onTap: (index) => _onItemTapped(context, index),
       ),
@@ -70,7 +101,7 @@ class HomePage extends StatelessWidget {
   Widget _buildSearchBar() {
     return TextField(
       decoration: InputDecoration(
-        hintText: 'Makan apa?',
+        hintText: 'Mau makan apa?',
         prefixIcon: Icon(Icons.search),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         filled: true,
@@ -83,29 +114,29 @@ class HomePage extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 10,
+            spreadRadius: 2,
+          ),
+        ],
       ),
       child: Column(
         children: [
           Text('Statistik Bulan Ini',
-              style: TextStyle(fontWeight: FontWeight.bold)),
-          SizedBox(height: 10),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black)),
+          SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Column(
-                children: [Text('2159'), Text('kcal left')],
-              ),
-              Column(
-                children: [Text('0/123 g'), Text('carbs')],
-              ),
-              Column(
-                children: [Text('0/59 g'), Text('fat')],
-              ),
-              Column(
-                children: [Text('0/80 g'), Text('protein')],
-              ),
+              _buildCircularStat('2159', 'kcal left'),
+              _buildStatCircle('0/123 g', 'carbs'),
+              _buildStatCircle('0/59 g', 'fat'),
+              _buildStatCircle('0/80 g', 'protein'),
             ],
           ),
         ],
@@ -113,11 +144,65 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  Widget _buildCircularStat(String value, String label) {
+    return Column(
+      children: [
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            CircularProgressIndicator(
+              value: 0.3,
+              backgroundColor: Colors.grey[200],
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+              strokeWidth: 6,
+            ),
+            Text(
+              value,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+          ],
+        ),
+        SizedBox(height: 8),
+        Text(label),
+      ],
+    );
+  }
+
+  Widget _buildStatCircle(String value, String label) {
+    return Column(
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.green, width: 3),
+          ),
+        ),
+        SizedBox(height: 8),
+        Text(value, style: TextStyle(fontSize: 14)),
+        Text(label, style: TextStyle(fontSize: 12)),
+      ],
+    );
+  }
+
+  Widget _buildSectionHeader(String title, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.brown, size: 24),
+        SizedBox(width: 8),
+        Text(
+          title,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.brown),
+        ),
+      ],
+    );
+  }
+
   Widget _buildArticles() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Row (
-        mainAxisAlignment: MainAxisAlignment.start,
+      child: Row(
         children: [
           _buildArticleCard(
               'Dampak Buruk GGL Berlebih', 'assets/images/burger.png'),
@@ -135,45 +220,59 @@ class HomePage extends StatelessWidget {
   Widget _buildArticleCard(String title, String imagePath) {
     return Container(
       decoration: BoxDecoration(
-      color: Colors.green.shade100,
-      borderRadius: BorderRadius.circular(10),
-      
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 8,
+            spreadRadius: 2,
+          ),
+        ],
       ),
-      width: 155,
+      width: 150,
       margin: EdgeInsets.only(right: 16),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
-          child: Padding(
-            padding: EdgeInsets.all(6.0),
-            child: Image.asset(imagePath, height: 90, fit: BoxFit.cover),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+            child: Image.asset(
+              imagePath,
+              height: 100,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-          SizedBox(height: 2),
-          Text(title, textAlign: TextAlign.center),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text(
+              title,
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildMealSection(String title) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        SizedBox(height: 5),
-        Container(
-          height: 50,
-          width: 50,
-          decoration: BoxDecoration(
-            color: Colors.green[100],
-            borderRadius: BorderRadius.circular(8),
-          ),
+ Widget _buildMealSection() {
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        height: 50,
+        width: 50,
+        decoration: BoxDecoration(
+          color: Colors.green[100],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Center(
           child: Icon(Icons.add, color: Colors.green),
         ),
-      ],
+      ),
     );
   }
+
 }
