@@ -1,259 +1,279 @@
 import 'package:flutter/material.dart';
+import 'package:ns_apps/screens/calendar_screen.dart';
+import 'package:ns_apps/screens/personalisasi_screen.dart';
+import 'package:ns_apps/screens/searchDetail_screen.dart';
 import '../constants/colors.dart';
-import 'package:table_calendar/table_calendar.dart';
-import '../model/calendar_model.dart';
+import '../constants/images.dart';
 
-class CalendarScreen extends StatefulWidget {
-  CalendarScreen({Key? key}) : super(key: key);
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
 
-  @override
-  State<CalendarScreen> createState() => _CalendarScreenState();
-}
-
-class _CalendarScreenState extends State<CalendarScreen> {
-  // sections harian
-  bool _isHarianSelected = true;
-
-  CalendarFormat _calendarFormat = CalendarFormat.month;
-  DateTime _selectedDay = DateTime.now();
-  DateTime _focusedDay = DateTime.now();
-
-  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    setState(() {
-      _selectedDay = selectedDay;
-      _focusedDay = focusedDay; // update `_focusedDay` here as well
-    });
+  // Fungsi untuk menangani perubahan halaman pada bottom navigation bar
+  void _onItemTapped(BuildContext context, int index) {
+    switch (index) {
+      case 0:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+        break;
+      case 1:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CalendarScreen()),
+        );
+        break;
+      case 2:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PersonalisasiScreen()),
+        );
+        break;
+      default:
+        return;
+    }
   }
-
-  // Daftar tanggal yang ingin ditandai
-  final _holidayDates = [
-    DateTime(2024, 11, 18),
-    DateTime(2024, 11, 20),
-  ];
-
-  // Contoh data batas maksimal (ganti dengan data dari database)
-  Map<DateTime, List<Batas>> batasMaksimal = {
-    DateTime(2024, 11, 18): [
-      Batas(jenis: "Lemak", batas: 65.0),
-      Batas(jenis: "Gula", batas: 50.0),
-      Batas(jenis: "Garam", batas: 5.0),
-    ],
-    DateTime(2024, 11, 20): [
-      Batas(jenis: "Lemak", batas: 70.0),
-      Batas(jenis: "Gula", batas: 45.0),
-      Batas(jenis: "Garam", batas: 6.0),
-    ],
-  };
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(
-          "Kalender Nutrisi",
-          style: const TextStyle(
-              color: tThirdColor, fontWeight: FontWeight.bold),
+        backgroundColor: Colors.green,
+        title: Row(
+          children: [
+            Icon(Icons.front_hand, color: Colors.yellow),
+            SizedBox(width: 8),
+            Text(
+              'Halo Hasna',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(width: 8),
+          ],
         ),
-        centerTitle: true,
+        actions: [
+          IconButton(icon: Icon(Icons.menu, color: Colors.white), onPressed: () {}),
+        ],
       ),
-      body: Column(
-        children: [
-          SizedBox(height: 20),
-          // Sections
-          Row(
-            children: [
-              SizedBox(width: 20),
-              Expanded(
-                child: InkWell(
-                  onTap: () {
-                    setState(() {
-                      _isHarianSelected = true;
-                    });
-                  },
-                  child: Container(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: _isHarianSelected ? tThirdColor : Colors.grey[300],
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        bottomLeft: Radius.circular(12),
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Harian",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: _isHarianSelected ? Colors.white : tThirdColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: InkWell(
-                  onTap: () {
-                    setState(() {
-                      _isHarianSelected = false;
-                    });
-                  },
-                  child: Container(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: _isHarianSelected ? Colors.grey[300] : tThirdColor,
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(12),
-                        bottomRight: Radius.circular(12),
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Bulanan",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: _isHarianSelected ? tThirdColor : Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 20),
-            ],
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Ayo lengkapi nutrisi kamu hari ini!',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+            ),
+            SizedBox(height: 20),
+            _buildSearchBar(),
+            SizedBox(height: 20),
+            _buildNutritionStats(),
+            SizedBox(height: 20),
+            _buildSectionHeader('Artikel', Icons.article),
+            SizedBox(height: 8),
+            _buildArticles(),
+            SizedBox(height: 20),
+            _buildSectionHeader('Sarapan', Icons.free_breakfast),
+            _buildMealSection(),
+            SizedBox(height: 20),
+            _buildSectionHeader('Makan Siang', Icons.lunch_dining),
+            _buildMealSection(),
+            SizedBox(height: 20),
+            _buildSectionHeader('Makan Malam', Icons.bakery_dining_outlined),
+            _buildMealSection(),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'Calendar'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
+        onTap: (index) => _onItemTapped(context, index),
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return TextField(
+      decoration: InputDecoration(
+        hintText: 'Mau makan apa?',
+        prefixIcon: Icon(Icons.search),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        filled: true,
+        fillColor: Colors.grey[200],
+      ),
+    );
+  }
+
+  Widget _buildNutritionStats() {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 10,
+            spreadRadius: 2,
           ),
-          // Section' Content
-          Expanded(
-            child: _isHarianSelected
-                ? _buildHarianContent()
-                : _buildBulananContent(),
+        ],
+      ),
+      child: Column(
+        children: [
+          Text('Statistik Bulan Ini',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black)),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildCircularStat('2159', 'kcal left'),
+              _buildStatCircle('0/123 g', 'carbs'),
+              _buildStatCircle('0/59 g', 'fat'),
+              _buildStatCircle('0/80 g', 'protein'),
+            ],
           ),
         ],
       ),
     );
   }
 
-  // Widget untuk konten "Harian"
-  Widget _buildHarianContent() {
-    // Implementasi konten harian di sini,
-    // misalnya menampilkan data nutrisi harian, progress bar, dll.
-    return Center(
-      child: Text("Konten Harian"),
-    );
-  }
-
-  // Widget untuk konten "Bulanan"
-  Widget _buildBulananContent() {
+  Widget _buildCircularStat(String value, String label) {
     return Column(
       children: [
-        SizedBox(height: 24),
-        _Calendar(),
-        SizedBox(height: 20),
-        // Menampilkan informasi untuk tanggal yang dipilih
-        if (batasMaksimal.containsKey(DateTime.utc(
-            _selectedDay.year, _selectedDay.month, _selectedDay.day)))
-          Column(
-            children: [
-              Text(
-                "Batas Maksimal",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 10),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal, // Perbaikan di sini
-                child: Row(
-                  children: batasMaksimal[DateTime.utc(
-                          _selectedDay.year,
-                          _selectedDay.month,
-                          _selectedDay.day)]!
-                      .map((batas) => _buildInfoCard(batas))
-                      .toList(),
-                ),
-              ),
-            ],
-          ),
-        // Widget lain untuk konten bulanan
-        Text("Konten Bulanan lainnya"),
-        SizedBox(height: 24),
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            CircularProgressIndicator(
+              value: 0.3,
+              backgroundColor: Colors.grey[200],
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+              strokeWidth: 6,
+            ),
+            Text(
+              value,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+          ],
+        ),
+        SizedBox(height: 8),
+        Text(label),
       ],
     );
   }
 
-  Widget _Calendar() {
-    return TableCalendar(
-      rowHeight: 50,
-      headerStyle: HeaderStyle(
-        formatButtonVisible: false,
-        titleCentered: true,
-      ),
-      availableGestures: AvailableGestures.all,
-      selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
-      focusedDay: _focusedDay,
-      firstDay: DateTime.utc(2020, 10, 16),
-      lastDay: DateTime.utc(2030, 3, 14),
-      onDaySelected: _onDaySelected,
-      calendarStyle: CalendarStyle(
-        // todayDecoration: BoxDecoration(
-        //   color: Colors.transparent
-        // ),
-        selectedDecoration: BoxDecoration(
-          color: tThirdColor,
-          borderRadius: BorderRadius.circular(10),
+  Widget _buildStatCircle(String value, String label) {
+    return Column(
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.green, width: 3),
+          ),
         ),
-        holidayDecoration: BoxDecoration(
-          color: Colors.grey[400],
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-      eventLoader: (day) {
-        // Menandai tanggal yang ada di _holidayDates
-        if (_holidayDates.any((holiday) => isSameDay(holiday, day))) 
-          return [Batas(jenis: "Holiday", batas: 0)]; // Dummy object
-        else
-          return [];
-      },
+        SizedBox(height: 8),
+        Text(value, style: TextStyle(fontSize: 14)),
+        Text(label, style: TextStyle(fontSize: 12)),
+      ],
     );
   }
 
-  // Widget untuk menampilkan informasi batas maksimal
-  Widget _buildInfoCard(Batas batas) {
-    return Card(
+  Widget _buildSectionHeader(String title, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.brown, size: 24),
+        SizedBox(width: 8),
+        Text(
+          title,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.brown),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildArticles() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          _buildArticleCard(
+              'Dampak Buruk GGL Berlebih', 'assets/images/burger.png'),
+          _buildArticleCard(
+              '4 Tips Mengonsumsi Makanan Manis', 'assets/images/sweets.png'),
+          _buildArticleCard(
+              'Dampak Buruk GGL Berlebih', 'assets/images/burger.png'),
+          _buildArticleCard(
+              '4 Tips Mengonsumsi Makanan Manis', 'assets/images/sweets.png'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildArticleCard(String title, String imagePath) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 8,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
+      width: 150,
+      margin: EdgeInsets.only(right: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+            child: Image.asset(
+              imagePath,
+              height: 100,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text(
+              title,
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+ Widget _buildMealSection() {
+    return GestureDetector(
+      onTap: () {},
       child: Container(
-        padding: EdgeInsets.all(16),
-        width: 150,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Konsumsi ${batas.jenis}",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 4),
-            Text(
-                "Batas Konsumsi ${batas.jenis} Harian Anda Maksimal (gram):"),
-            SizedBox(height: 4),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(batas.batas.toString()),
-                Icon(Icons.check),
-              ],
-            ),
-          ],
+        height: 50,
+        width: 50,
+        decoration: BoxDecoration(
+          color: Colors.green[100],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Center(
+          child: Icon(Icons.add, color: Colors.green),
         ),
       ),
     );
   }
-}
 
+}
