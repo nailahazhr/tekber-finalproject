@@ -31,12 +31,12 @@ class SearchdetailScreenState extends State<SearchdetailScreen> {
   Widget _infoGizi() {
   List<String> titles = ['Kalori', 'Karbohidrat', 'Protein', 'Lemak', 'Gula', 'Garam'];
   List<String> values = [
-    data.kalori,
-    data.karbohidrat,
-    data.protein,
-    data.lemak,
-    data.gula,
-    data.garam,
+    '${data.kalori} ${data.satuanKalori}',
+    '${data.karbohidrat} ${data.satuanKarbohidrat}',
+    '${data.protein} ${data.satuanProtein}',
+    '${data.lemak} ${data.satuanLemak}',
+    '${data.gula} ${data.satuanGula}',
+    '${data.garam} ${data.satuanGaram}',
   ];
 
   return Column(
