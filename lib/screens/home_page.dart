@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
       case 0:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => CalendarScreen()),
         );
         break;
       case 1:
