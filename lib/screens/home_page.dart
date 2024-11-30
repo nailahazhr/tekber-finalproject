@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ns_apps/screens/personalisasi_screen.dart';
+import 'package:ns_apps/screens/calendar_screen.dart';
 import 'package:ns_apps/screens/searchDetail_screen.dart';
 import '../constants/colors.dart';
 import '../constants/images.dart';
@@ -13,13 +14,13 @@ class HomePage extends StatelessWidget {
       case 0:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => CalendarScreen()),
+          MaterialPageRoute(builder: (context) => HomePage()),
         );
         break;
       case 1:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => SearchdetailScreen()),
+          MaterialPageRoute(builder: (context) => CalendarScreen()),
         );
         break;
       case 2:
