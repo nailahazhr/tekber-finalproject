@@ -192,7 +192,7 @@ class _PersonalisasiScreenState extends State<PersonalisasiScreen> {
           children: <Widget>[
             Text(
               'Apakah sudah memiliki akun ?',
-              style: TextStyle(color: tGreyColor, fontSize: 13, fontWeight: FontWeight.w600),
+              style: TextStyle(color: tGreyColor, fontSize: 16, fontWeight: FontWeight.w600),
             ),
             SizedBox(
               width: 10,
@@ -201,7 +201,7 @@ class _PersonalisasiScreenState extends State<PersonalisasiScreen> {
               'Masuk',
               style: TextStyle(
                   color: tSecondaryColor,
-                  fontSize: 13,
+                  fontSize: 16,
                   fontWeight: FontWeight.w600),
             ),
           ],
