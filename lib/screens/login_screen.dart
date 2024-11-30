@@ -217,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {  // Changed state class nam
         children: <Widget>[
           Text(
             'Belum memiliki akun ?',
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: tGreyColor),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: tGreyColor),
           ),
           SizedBox(
             width: 10,
@@ -231,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {  // Changed state class nam
               'Daftar',
               style: TextStyle(
                   color: tSecondaryColor,
-                  fontSize: 13,
+                  fontSize: 16,
                   fontWeight: FontWeight.w600),
             ),
           ),
