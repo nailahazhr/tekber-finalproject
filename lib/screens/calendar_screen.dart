@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 import '../constants/colors.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../model/calendar_model.dart';
-import '../constants/calendar_data.dart'; // Import file data
+import '../constants/calendar_data.dart';
+import 'package:easy_date_timeline/easy_date_timeline.dart';
 
 class CalendarScreen extends StatefulWidget {
   CalendarScreen({Key? key}) : super(key: key);
@@ -126,10 +128,89 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   Widget _buildHarianContent() {
-    return Center(
-      child: Text("Konten Harian"),
+    return Column(
+      children: [
+        SizedBox(height: 24),
+        EasyDateTimeLine(
+          initialDate: DateTime.now(),
+          onDateChange: (selectedDate) {
+            setState(() {
+              _selectedDay = selectedDate;
+            });
+          },
+          activeColor: tSecondaryColor,
+        ),
+        SizedBox(height: 20),
+        batasMaksimal.containsKey(
+                DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day))
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Divider(
+                    color: Colors.grey.shade100,
+                    thickness: 1,
+                    indent: 20,
+                    endIndent: 20,
+                  ),
+                  SizedBox(height: 12),
+                  Center(
+                    child: Text(
+                      "Nutrisi Harian",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: tThirdColor,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: batasMaksimal[DateTime(
+                            _selectedDay.year,
+                            _selectedDay.month,
+                            _selectedDay.day)]!
+                        .map((batas) => _nutrisiCard(batas))
+                        .toList(),
+                  ),
+                ],
+              )
+            : Center(
+                child: Text("Tidak ada informasi untuk tanggal ini."),
+              ),
+        SizedBox(height: 24),
+      ],
     );
   }
+
+  Widget _nutrisiCard(Batas batas) {
+  return Column(
+    children: [
+      SizedBox(
+        width: MediaQuery.of(context).size.width * 0.98,
+        height: 100, 
+        child: SfCartesianChart(
+          borderWidth: 0,
+          plotAreaBorderWidth: 0,
+          primaryXAxis: CategoryAxis(
+            majorGridLines: const MajorGridLines(width: 0),
+            // axisLine: AxisLine(width: 0),
+            labelStyle: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          primaryYAxis: NumericAxis(
+            majorGridLines: const MajorGridLines(width: 0),
+            axisLine: AxisLine(width: 0),
+            isVisible: false,
+          ),
+          series: buildChartSeries(_selectedDay, batas), 
+          tooltipBehavior: TooltipBehavior(enable: true),
+        ),
+      ),
+    ],
+  );
+}
 
   Widget _buildBulananContent() {
     return Column(
@@ -137,7 +218,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
         SizedBox(height: 24),
         _Calendar(),
         SizedBox(height: 20),
-        batasMaksimal.containsKey(DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day))
+        batasMaksimal.containsKey(
+                DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day))
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -160,9 +242,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: batasMaksimal[DateTime(
-                      _selectedDay.year,
-                      _selectedDay.month,
-                      _selectedDay.day)]!
+                            _selectedDay.year,
+                            _selectedDay.month,
+                            _selectedDay.day)]!
                         .map((batas) => _buildInfoCard(batas))
                         .toList(),
                   ),
@@ -178,7 +260,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   Widget _Calendar() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0), // Tambahkan jarak ke kanan dan kiri
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: TableCalendar(
         rowHeight: 50,
         headerStyle: HeaderStyle(
@@ -218,7 +300,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-
   Widget _buildInfoCard(Batas batas) {
     return Card(
       elevation: 3,
@@ -228,14 +309,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
       ),
       child: Container(
         // Gunakan MediaQuery untuk mengambil lebar layar
-        width: MediaQuery.of(context).size.width * 0.3, 
+        width: MediaQuery.of(context).size.width * 0.3,
         padding: EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              "Konsumsi"+"\n${batas.jenis}",
+              "Konsumsi" + "\n${batas.jenis}",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
@@ -247,7 +328,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
             Text(
               "Batas Konsumsi ${batas.jenis} Harian Anda Maksimal (gram):",
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: const Color.fromARGB(255, 48, 48, 48)),
+              style: TextStyle(
+                  fontSize: 12, color: const Color.fromARGB(255, 48, 48, 48)),
             ),
             SizedBox(height: 8),
             Row(
@@ -271,5 +353,4 @@ class _CalendarScreenState extends State<CalendarScreen> {
       ),
     );
   }
-
 }
