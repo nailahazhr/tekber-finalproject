@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ns_apps/screens/personalisasi_screen.dart';
 import 'package:ns_apps/screens/calendar_screen.dart';
 import 'package:ns_apps/screens/searchDetail_screen.dart';
-import 'package:ns_apps/screens/artikel_page.dart';
+import 'package:ns_apps/screens/articles.dart';
 import '../constants/colors.dart';
 import '../constants/images.dart';
 
@@ -226,7 +226,7 @@ Widget _buildArticleCard(BuildContext context, String title, String imagePath) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const ArticlesPage(), 
+          builder: (context) => const ArticlesPage(), // Navigasi ke ArticlesPage
         ),
       );
     },
@@ -271,8 +271,7 @@ Widget _buildArticleCard(BuildContext context, String title, String imagePath) {
   );
 }
 
-
- Widget _buildMealSection() {
+  Widget _buildMealSection() {
     return GestureDetector(
       onTap: () {},
       child: Container(
