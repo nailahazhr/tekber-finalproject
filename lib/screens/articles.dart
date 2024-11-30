@@ -43,10 +43,10 @@ class ArticlesPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(0)),
           child: Image.asset(
             article.imagePath,
-            height: 500,
+            height: 300,
             width: double.infinity,
             fit: BoxFit.cover,
           ),
@@ -78,7 +78,8 @@ class ArticlesPage extends StatelessWidget {
               Text(
                 article.description,
                 style: const TextStyle(fontSize: 14, color: Colors.black87),
-                maxLines: 3,
+                textAlign: TextAlign.justify,
+                maxLines: 100,
                 overflow: TextOverflow.ellipsis,
                 ),
               ],
