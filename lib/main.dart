@@ -4,13 +4,9 @@ import 'package:ns_apps/screens/personalisasi_screen.dart';
 import 'package:ns_apps/screens/home_page.dart';
 import 'package:ns_apps/screens/login_screen.dart';
 import 'package:ns_apps/screens/signup_screen.dart';
-<<<<<<< HEAD
 import 'package:ns_apps/screens/artikel_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-=======
-import 'package:ns_apps/screens/articles.dart';
->>>>>>> 51dd0162c14d07a2244898a45b0715cd1d53bd42
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
