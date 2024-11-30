@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ns_apps/screens/personalisasi_screen.dart';
 import 'package:ns_apps/screens/calendar_screen.dart';
 import 'package:ns_apps/screens/searchDetail_screen.dart';
+import 'package:ns_apps/screens/artikel_page.dart';
 import '../constants/colors.dart';
 import '../constants/images.dart';
 
@@ -75,7 +76,7 @@ class HomePage extends StatelessWidget {
             SizedBox(height: 20),
             _buildSectionHeader('Artikel', Icons.article),
             SizedBox(height: 8),
-            _buildArticles(),
+            _buildArticles(context),
             SizedBox(height: 20),
             _buildSectionHeader('Sarapan', Icons.free_breakfast),
             _buildMealSection(),
@@ -200,26 +201,36 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildArticles() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          _buildArticleCard(
-              'Dampak Buruk GGL Berlebih', 'assets/images/burger.png'),
-          _buildArticleCard(
-              '4 Tips Mengonsumsi Makanan Manis', 'assets/images/sweets.png'),
-          _buildArticleCard(
-              'Dampak Buruk GGL Berlebih', 'assets/images/burger.png'),
-          _buildArticleCard(
-              '4 Tips Mengonsumsi Makanan Manis', 'assets/images/sweets.png'),
-        ],
-      ),
-    );
-  }
+  Widget _buildArticles(BuildContext context) {
+  return SingleChildScrollView(
+    scrollDirection: Axis.horizontal,
+    child: Row(
+      children: [
+        _buildArticleCard(
+            context, 'Dampak Buruk GGL Berlebih', 'assets/images/burger.png'),
+        _buildArticleCard(
+            context, '4 Tips Mengonsumsi Makanan Manis', 'assets/images/sweets.png'),
+        _buildArticleCard(
+            context, 'Dampak Buruk GGL Berlebih', 'assets/images/burger.png'),
+        _buildArticleCard(
+            context, '4 Tips Mengonsumsi Makanan Manis', 'assets/images/sweets.png'),
+      ],
+    ),
+  );
+}
 
-  Widget _buildArticleCard(String title, String imagePath) {
-    return Container(
+Widget _buildArticleCard(BuildContext context, String title, String imagePath) {
+  return GestureDetector(
+    onTap: () {
+      // Navigasi ke halaman artikel
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ArticlesPage(), 
+        ),
+      );
+    },
+    child: Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -232,12 +243,12 @@ class HomePage extends StatelessWidget {
         ],
       ),
       width: 150,
-      margin: EdgeInsets.only(right: 16),
+      margin: const EdgeInsets.only(right: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
             child: Image.asset(
               imagePath,
               height: 100,
@@ -246,18 +257,20 @@ class HomePage extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Text(
               title,
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
  Widget _buildMealSection() {
     return GestureDetector(

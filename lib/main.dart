@@ -4,6 +4,7 @@ import 'package:ns_apps/screens/personalisasi_screen.dart';
 import 'package:ns_apps/screens/home_page.dart';
 import 'package:ns_apps/screens/login_screen.dart';
 import 'package:ns_apps/screens/signup_screen.dart';
+import 'package:ns_apps/screens/artikel_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomePage(),
         '/login': (context) => LoginScreen(),
         '/signup': (context) => SignUpScreen(),
+        '/articles': (context) => ArticlesPage(),
       }
     );
   }
