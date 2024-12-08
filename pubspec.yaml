@@ -103,6 +103,7 @@ flutter:
   assets:
     - assets/images/
     - assets/images/Logo.png
+    - assets/images/avatar.png
   fonts:
     - family: Nunito
       fonts:
