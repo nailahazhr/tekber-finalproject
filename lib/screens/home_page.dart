@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ns_apps/screens/personalisasi_screen.dart';
+import 'package:ns_apps/data_to_cloud/pageAddMakan.dart';
 import 'package:ns_apps/screens/calendar_screen.dart';
+import 'package:ns_apps/screens/profil_screen.dart';
 import 'package:ns_apps/screens/searchDetail_screen.dart';
 import 'package:ns_apps/screens/articles.dart';
 import '../constants/colors.dart';
@@ -21,13 +22,14 @@ class HomePage extends StatelessWidget {
       case 1:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => CalendarScreen()),
+          MaterialPageRoute(
+              builder: (context) => CalendarScreen()),
         );
         break;
       case 2:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => PersonalisasiScreen()),
+          MaterialPageRoute(builder: (context) => ProfilScreen()),
         );
         break;
       default:
@@ -39,7 +41,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.green,
+         foregroundColor:Colors.white, backgroundColor: Colors.green,
         title: Row(
           children: [
             Icon(Icons.front_hand, color: Colors.yellow),
@@ -57,7 +59,8 @@ class HomePage extends StatelessWidget {
           ],
         ),
         actions: [
-          IconButton(icon: Icon(Icons.menu, color: Colors.white), onPressed: () {}),
+          IconButton(
+              icon: Icon(Icons.menu, color: Colors.white), onPressed: () {}),
         ],
       ),
       body: SingleChildScrollView(
@@ -92,7 +95,8 @@ class HomePage extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'Calendar'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_today), label: 'Calendar'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
         onTap: (index) => _onItemTapped(context, index),
@@ -130,7 +134,9 @@ class HomePage extends StatelessWidget {
         children: [
           Text('Statistik Bulan Ini',
               style: TextStyle(
-                  fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black)),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.black)),
           SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -195,97 +201,110 @@ class HomePage extends StatelessWidget {
         SizedBox(width: 8),
         Text(
           title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.brown),
+          style: TextStyle(
+              fontSize: 18, fontWeight: FontWeight.bold, color: Colors.brown),
         ),
       ],
     );
   }
 
   Widget _buildArticles(BuildContext context) {
-  return SingleChildScrollView(
-    scrollDirection: Axis.horizontal,
-    child: Row(
-      children: [
-        _buildArticleCard(
-            context, 'Dampak Buruk GGL Berlebih', 'assets/images/burger.png'),
-        _buildArticleCard(
-            context, '4 Tips Mengonsumsi Makanan Manis', 'assets/images/sweets.png'),
-        _buildArticleCard(
-            context, 'Dampak Buruk GGL Berlebih', 'assets/images/burger.png'),
-        _buildArticleCard(
-            context, '4 Tips Mengonsumsi Makanan Manis', 'assets/images/sweets.png'),
-      ],
-    ),
-  );
-}
-
-Widget _buildArticleCard(BuildContext context, String title, String imagePath) {
-  return GestureDetector(
-    onTap: () {
-      // Navigasi ke halaman artikel
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const ArticlesPage(), // Navigasi ke ArticlesPage
-        ),
-      );
-    },
-    child: Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            blurRadius: 8,
-            spreadRadius: 2,
-          ),
-        ],
-      ),
-      width: 150,
-      margin: const EdgeInsets.only(right: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
         children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-            child: Image.asset(
-              imagePath,
-              height: 100,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
+          _buildArticleCard(
+              context, 'Dampak Buruk GGL Berlebih', 'assets/images/burger.png'),
+          _buildArticleCard(context, '4 Tips Mengonsumsi Makanan Manis',
+              'assets/images/sweets.png'),
+          _buildArticleCard(
+              context, 'Dampak Buruk GGL Berlebih', 'assets/images/burger.png'),
+          _buildArticleCard(context, '4 Tips Mengonsumsi Makanan Manis',
+              'assets/images/sweets.png'),
         ],
       ),
-    ),
-  );
-}
+    );
+  }
 
-  Widget _buildMealSection() {
+  Widget _buildArticleCard(
+      BuildContext context, String title, String imagePath) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        // Navigasi ke halaman artikel
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                const ArticlesPage(), // Navigasi ke ArticlesPage
+          ),
+        );
+      },
       child: Container(
-        height: 50,
-        width: 50,
         decoration: BoxDecoration(
-          color: Colors.green[100],
+          color: Colors.white,
           borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 8,
+              spreadRadius: 2,
+            ),
+          ],
         ),
-        child: Center(
-          child: Icon(Icons.add, color: Colors.green),
+        width: 150,
+        margin: const EdgeInsets.only(right: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(8)),
+              child: Image.asset(
+                imagePath,
+                height: 100,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                title,
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
+  Widget _buildMealSection() {
+    return Builder(
+      builder: (BuildContext context) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => PageAddMakan()),
+            );
+          },
+          child: Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+              color: Colors.green[100],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Icon(Icons.add, color: Colors.green),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
