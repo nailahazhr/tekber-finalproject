@@ -7,7 +7,7 @@ import '../constants/calendar_data.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 
 class CalendarScreen extends StatefulWidget {
-  CalendarScreen({Key? key}) : super(key: key);
+  const CalendarScreen({super.key});
 
   @override
   State<CalendarScreen> createState() => _CalendarScreenState();
@@ -16,7 +16,7 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   bool _isHarianSelected = true;
 
-  CalendarFormat _calendarFormat = CalendarFormat.month;
+  final CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
 
@@ -34,9 +34,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
       // Header
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text(
+        title: const Text(
           "Kalender Nutrisi",
-          style: const TextStyle(
+          style: TextStyle(
             color: tThirdColor,
             fontWeight: FontWeight.bold,
           ),
@@ -45,7 +45,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       ),
       body: Column(
         children: [
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           _buildSections(),
           Expanded(
             child: SingleChildScrollView(
@@ -63,7 +63,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Widget _buildSections() {
     return Row(
       children: [
-        SizedBox(width: 20),
+        const SizedBox(width: 20),
         Expanded(
           child: InkWell(
             onTap: () {
@@ -72,10 +72,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
               });
             },
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               decoration: BoxDecoration(
                 color: _isHarianSelected ? tThirdColor : Colors.grey[300],
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(12),
                   bottomLeft: Radius.circular(12),
                 ),
@@ -101,10 +101,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
               });
             },
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               decoration: BoxDecoration(
                 color: _isHarianSelected ? Colors.grey[300] : tThirdColor,
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(12),
                   bottomRight: Radius.circular(12),
                 ),
@@ -122,7 +122,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ),
           ),
         ),
-        SizedBox(width: 20),
+        const SizedBox(width: 20),
       ],
     );
   }
@@ -130,7 +130,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Widget _buildHarianContent() {
     return Column(
       children: [
-        SizedBox(height: 24),
+        const SizedBox(height: 24),
         EasyDateTimeLine(
           initialDate: DateTime.now(),
           onDateChange: (selectedDate) {
@@ -140,7 +140,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           },
           activeColor: tSecondaryColor,
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         batasMaksimal.containsKey(
                 DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day))
             ? Column(
@@ -152,18 +152,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     indent: 20,
                     endIndent: 20,
                   ),
-                  SizedBox(height: 12),
-                  Center(
+                  const SizedBox(height: 12),
+                  const Center(
                     child: Text(
                       "Nutrisi Harian",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: tThirdColor,
                       ),
                     ),
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: batasMaksimal[DateTime(
@@ -175,10 +175,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   ),
                 ],
               )
-            : Center(
+            : const Center(
                 child: Text("Tidak ada informasi untuk tanggal ini."),
               ),
-        SizedBox(height: 24),
+        const SizedBox(height: 24),
       ],
     );
   }
@@ -195,13 +195,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
           primaryXAxis: CategoryAxis(
             majorGridLines: const MajorGridLines(width: 0),
             // axisLine: AxisLine(width: 0),
-            labelStyle: TextStyle(
+            labelStyle: const TextStyle(
               fontWeight: FontWeight.bold,
             ),
           ),
           primaryYAxis: NumericAxis(
             majorGridLines: const MajorGridLines(width: 0),
-            axisLine: AxisLine(width: 0),
+            axisLine: const AxisLine(width: 0),
             isVisible: false,
           ),
           series: buildChartSeries(_selectedDay, batas), 
@@ -215,9 +215,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Widget _buildBulananContent() {
     return Column(
       children: [
-        SizedBox(height: 24),
+        const SizedBox(height: 24),
         _Calendar(),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         batasMaksimal.containsKey(
                 DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day))
             ? Column(
@@ -229,16 +229,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     indent: 20,
                     endIndent: 20,
                   ),
-                  SizedBox(height: 12),
-                  Text(
+                  const SizedBox(height: 12),
+                  const Text(
                     "Batas Maksimal",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: tThirdColor,
                     ),
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: batasMaksimal[DateTime(
@@ -250,10 +250,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   ),
                 ],
               )
-            : Center(
+            : const Center(
                 child: Text("Tidak ada informasi untuk tanggal ini."),
               ),
-        SizedBox(height: 24),
+        const SizedBox(height: 24),
       ],
     );
   }
@@ -263,7 +263,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: TableCalendar(
         rowHeight: 50,
-        headerStyle: HeaderStyle(
+        headerStyle: const HeaderStyle(
           formatButtonVisible: false,
           titleCentered: true,
         ),
@@ -282,7 +282,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             color: tAccentColor2,
             borderRadius: BorderRadius.circular(10),
           ),
-          holidayTextStyle: TextStyle(
+          holidayTextStyle: const TextStyle(
             color: Colors.white,
           ),
           holidayDecoration: BoxDecoration(
@@ -310,42 +310,42 @@ class _CalendarScreenState extends State<CalendarScreen> {
       child: Container(
         // Gunakan MediaQuery untuk mengambil lebar layar
         width: MediaQuery.of(context).size.width * 0.3,
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              "Konsumsi" + "\n${batas.jenis}",
+              "Konsumsi" "\n${batas.jenis}",
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: tThirdColor,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               "Batas Konsumsi ${batas.jenis} Harian Anda Maksimal (gram):",
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 12, color: const Color.fromARGB(255, 48, 48, 48)),
+              style: const TextStyle(
+                  fontSize: 12, color: Color.fromARGB(255, 48, 48, 48)),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   batas.batas.toString(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: tThirdColor,
                   ),
                 ),
-                SizedBox(width: 8),
-                Icon(Icons.check_circle, color: tThirdColor),
+                const SizedBox(width: 8),
+                const Icon(Icons.check_circle, color: tThirdColor),
               ],
             ),
           ],

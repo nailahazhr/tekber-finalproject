@@ -16,7 +16,7 @@ class _SplashscreenState extends State<Splashscreen> with SingleTickerProviderSt
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
-    Future.delayed(Duration(seconds: 2), (){
+    Future.delayed(const Duration(seconds: 2), (){
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const OnboardingScreen(),
       ));
     });
@@ -29,6 +29,7 @@ class _SplashscreenState extends State<Splashscreen> with SingleTickerProviderSt
   }
 
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(

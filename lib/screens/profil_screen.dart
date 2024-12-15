@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ns_apps/screens/onboarding_screen.dart';
 
 class ProfilScreen extends StatefulWidget {
-  ProfilScreen({Key? key, this.title}) : super(key: key);
+  const ProfilScreen({super.key, this.title});
 
   final String? title;
 
@@ -45,11 +45,11 @@ class _ProfilScreenState extends State<ProfilScreen> {
             Center(
               child: CircleAvatar(
                 radius: 50,
-                backgroundImage: AssetImage('assets/images/avatar.png'), // Gambar profil
+                backgroundImage: const AssetImage('assets/images/avatar.png'), // Gambar profil
                 backgroundColor: Colors.grey[200],
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Info profil
             _buildProfileItem('Nama', nama),
@@ -58,11 +58,11 @@ class _ProfilScreenState extends State<ProfilScreen> {
             _buildProfileItem('Tinggi Badan', '$tinggiBadan cm'),
             _buildProfileItem('Berat Badan', '$beratBadan kg'),
             _buildProfileItem('Jenis Kelamin', jenisKelamin),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Tombol aksi
             _buildButton(context, 'About', Icons.info, _onAboutPressed),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildButton(context, 'Keluar Akun', Icons.logout, _onLogoutPressed),
           ],
         ),
@@ -85,7 +85,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
           children: <Widget>[
             Text(
               title,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Text(
               value,
@@ -114,7 +114,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
       label: Text(text),
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.white, backgroundColor: buttonColor,
-        minimumSize: Size(double.infinity, 50),
+        minimumSize: const Size(double.infinity, 50),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -129,14 +129,14 @@ class _ProfilScreenState extends State<ProfilScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('About'),
-          content: Text('Aplikasi Nutrismart dibuat untuk memenuhi tugas Final Project mata kuliah Teknologi Berkembang. Dikembangkan oleh Kelompok 10 Tekber.'),
+          title: const Text('About'),
+          content: const Text('Aplikasi Nutrismart dibuat untuk memenuhi tugas Final Project mata kuliah Teknologi Berkembang. Dikembangkan oleh Kelompok 10 Tekber.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Tutup'),
+              child: const Text('Tutup'),
             ),
           ],
         );
@@ -151,27 +151,27 @@ class _ProfilScreenState extends State<ProfilScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Keluar Akun'),
-          content: Text('Apakah Kamu yakin ingin keluar dari akun ini?'),
+          title: const Text('Keluar Akun'),
+          content: const Text('Apakah Kamu yakin ingin keluar dari akun ini?'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Batal'),
+              child: const Text('Batal'),
             ),
             TextButton(
               onPressed: () {
                 // Implementasi logika logout
                 Navigator.push(
-                context, MaterialPageRoute(builder: (context) => OnboardingScreen()),
+                context, MaterialPageRoute(builder: (context) => const OnboardingScreen()),
                 );
                 // Bisa menambahkan proses logout di sini
               },
-              child: Text('Keluar'),
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white, backgroundColor: Colors.red,
               ),
+              child: Text('Keluar'),
             ),
           ],
         );

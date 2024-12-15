@@ -226,8 +226,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           children: [
             // Header Section
             Container(
-              padding: EdgeInsets.only(top: 50, bottom: 30),
-              child: Column(
+              padding: const EdgeInsets.only(top: 50, bottom: 30),
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
@@ -249,18 +249,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             // Dots Indicator for pages
             buildDots(),
 
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
 
             // Action Button Section
             button(),
 
             // Footer Section with Login Prompt
             Container(
-              padding: EdgeInsets.only(bottom: 80),
+              padding: const EdgeInsets.only(bottom: 80),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     "Apakah sudah memiliki akun?",
                     style: TextStyle(
                       fontSize: 17,
@@ -268,7 +268,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       color: tGreyColor,
                     ),
                   ),
-                  Text(" "),
+                  const Text(" "),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -276,7 +276,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         MaterialPageRoute(builder: (context) => LoginScreen()),
                       );
                     },
-                    child: Text(
+                    child: const Text(
                       "Masuk",
                       style: TextStyle(
                         fontSize: 17,
@@ -297,7 +297,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   // Body for Onboarding content
   Widget body() {
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height * 0.6, // Limit the height of this section
       child: PageView.builder(
         controller: pageController,

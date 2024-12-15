@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../constants/colors.dart';
 import '../constants/images.dart';
+import 'package:ns_apps/screens/home_page.dart';
 
 class PersonalisasiScreen extends StatefulWidget {
-  PersonalisasiScreen({Key? key, this.title}) : super(key: key);
+  const PersonalisasiScreen({super.key, this.title});
 
   final String? title;
 
@@ -101,7 +102,7 @@ class _PersonalisasiScreenState extends State<PersonalisasiScreen> {
 
   Widget _title() {
     return Container(
-      child: Text(
+      child: const Text(
         "Personalisasi",
         textAlign: TextAlign.center,
         style: TextStyle(
@@ -156,27 +157,37 @@ class _PersonalisasiScreenState extends State<PersonalisasiScreen> {
     );
   }
 
-
   Widget _submitButton() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 15),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(15)),
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(15)),
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
+              color: Colors.grey.shade200,
+              offset: const Offset(2, 4),
+              blurRadius: 5,
+              spreadRadius: 2,
+            ),
           ],
-          color: tThirdColor),
-      child: Text(
-        'Simpan',
-        style: TextStyle(fontSize: 20, color: Colors.white),
+          color: tThirdColor,
+        ),
+        child: const Text(
+          'Simpan',
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
       ),
     );
   }
+
   Widget _loginAccountLabel() {
     return InkWell(
       // onTap: () {
@@ -184,10 +195,10 @@ class _PersonalisasiScreenState extends State<PersonalisasiScreen> {
       //       context, MaterialPageRoute(builder: (context) => LoginPage()));
       // },
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 20),
+        margin: const EdgeInsets.symmetric(vertical: 20),
         // padding: EdgeInsets.all(15),
         alignment: Alignment.bottomCenter,
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
@@ -214,12 +225,12 @@ class _PersonalisasiScreenState extends State<PersonalisasiScreen> {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
         backgroundColor: tWhiteColor,
-        body: Container(
+        body: SizedBox(
           height: height,
           child: Stack(
             children: <Widget>[
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 30),
+                padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -227,13 +238,13 @@ class _PersonalisasiScreenState extends State<PersonalisasiScreen> {
                     children: <Widget>[
                       SizedBox(height: height * .1),
                       _title(),
-                      Text(
+                      const Text(
                         'Bantu kami mengenal dirimu lebih baik',
                         style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: tGreyColor),
                       ),
-                      SizedBox(height: 30),
+                      const SizedBox(height: 30),
                       _personalisasiWidget(),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       _submitButton(),
                       _loginAccountLabel(),
                     ],

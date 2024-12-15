@@ -8,7 +8,7 @@ import '../constants/colors.dart';
 import '../constants/images.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   // Fungsi untuk menangani perubahan halaman pada bottom navigation bar
   void _onItemTapped(BuildContext context, int index) {
@@ -16,7 +16,7 @@ class HomePage extends StatelessWidget {
       case 0:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
         break;
       case 1:
@@ -40,9 +40,10 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: tWhiteColor,
       appBar: AppBar(
          foregroundColor:Colors.white, backgroundColor: Colors.green,
-        title: Row(
+        title: const Row(
           children: [
             Icon(Icons.front_hand, color: Colors.yellow),
             SizedBox(width: 8),
@@ -60,7 +61,7 @@ class HomePage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-              icon: Icon(Icons.menu, color: Colors.white), onPressed: () {}),
+              icon: const Icon(Icons.menu, color: Colors.white), onPressed: () {}),
         ],
       ),
       body: SingleChildScrollView(
@@ -68,25 +69,25 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Ayo lengkapi nutrisi kamu hari ini!',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildSearchBar(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildNutritionStats(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildSectionHeader('Artikel', Icons.article),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             _buildArticles(context),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildSectionHeader('Sarapan', Icons.free_breakfast),
             _buildMealSection(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildSectionHeader('Makan Siang', Icons.lunch_dining),
             _buildMealSection(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildSectionHeader('Makan Malam', Icons.bakery_dining_outlined),
             _buildMealSection(),
           ],
@@ -108,7 +109,7 @@ class HomePage extends StatelessWidget {
     return TextField(
       decoration: InputDecoration(
         hintText: 'Mau makan apa?',
-        prefixIcon: Icon(Icons.search),
+        prefixIcon: const Icon(Icons.search),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         filled: true,
         fillColor: Colors.grey[200],
@@ -118,7 +119,7 @@ class HomePage extends StatelessWidget {
 
   Widget _buildNutritionStats() {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: Colors.white,
@@ -132,12 +133,12 @@ class HomePage extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text('Statistik Bulan Ini',
+          const Text('Statistik Bulan Ini',
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                   color: Colors.black)),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -161,16 +162,16 @@ class HomePage extends StatelessWidget {
             CircularProgressIndicator(
               value: 0.3,
               backgroundColor: Colors.grey[200],
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+              valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
               strokeWidth: 6,
             ),
             Text(
               value,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
           ],
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(label),
       ],
     );
@@ -187,9 +188,9 @@ class HomePage extends StatelessWidget {
             border: Border.all(color: Colors.green, width: 3),
           ),
         ),
-        SizedBox(height: 8),
-        Text(value, style: TextStyle(fontSize: 14)),
-        Text(label, style: TextStyle(fontSize: 12)),
+        const SizedBox(height: 8),
+        Text(value, style: const TextStyle(fontSize: 14)),
+        Text(label, style: const TextStyle(fontSize: 12)),
       ],
     );
   }
@@ -198,10 +199,10 @@ class HomePage extends StatelessWidget {
     return Row(
       children: [
         Icon(icon, color: Colors.brown, size: 24),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
               fontSize: 18, fontWeight: FontWeight.bold, color: Colors.brown),
         ),
       ],
@@ -289,7 +290,7 @@ class HomePage extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => PageAddMakan()),
+              MaterialPageRoute(builder: (context) => const PageAddMakan()),
             );
           },
           child: Container(
@@ -299,7 +300,7 @@ class HomePage extends StatelessWidget {
               color: Colors.green[100],
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Center(
+            child: const Center(
               child: Icon(Icons.add, color: Colors.green),
             ),
           ),

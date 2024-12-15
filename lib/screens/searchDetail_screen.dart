@@ -4,7 +4,7 @@ import 'package:ns_apps/model/product_model.dart';
 import 'package:ns_apps/constants/product_data.dart'; 
 
 class SearchdetailScreen extends StatefulWidget {
-  SearchdetailScreen({Key? key}) : super(key: key);
+  const SearchdetailScreen({super.key});
 
   @override
   State<SearchdetailScreen> createState() => SearchdetailScreenState();
@@ -41,7 +41,7 @@ class SearchdetailScreenState extends State<SearchdetailScreen> {
 
   return Column(
     children: [
-      SizedBox(
+      const SizedBox(
         width: double.infinity,
         child: Text(
           'Informasi Nilai Gizi',
@@ -53,7 +53,7 @@ class SearchdetailScreenState extends State<SearchdetailScreen> {
           ),
         ),
       ),
-      SizedBox(height: 20),
+      const SizedBox(height: 20),
       for (int i = 0; i < titles.length; i += 3)...[
         Card(
           color: const Color(0xFFF0FFF0),
@@ -74,7 +74,7 @@ class SearchdetailScreenState extends State<SearchdetailScreen> {
                     children: [
                       Text(
                         titles[j],
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: tPrimaryColor,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -82,7 +82,7 @@ class SearchdetailScreenState extends State<SearchdetailScreen> {
                       ),
                       Text(
                         values[j],
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: tThirdColor,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -94,7 +94,7 @@ class SearchdetailScreenState extends State<SearchdetailScreen> {
             ),
           ),
         ),
-        if (i < titles.length - 3) SizedBox(height: 16),
+        if (i < titles.length - 3) const SizedBox(height: 16),
       ],
     ],
   );
@@ -102,19 +102,19 @@ class SearchdetailScreenState extends State<SearchdetailScreen> {
 
   Widget _submitButton() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 15),
+      padding: const EdgeInsets.symmetric(vertical: 15),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(15)),
+          borderRadius: const BorderRadius.all(Radius.circular(15)),
           boxShadow: <BoxShadow>[
             BoxShadow(
                 color: Colors.grey.shade200,
-                offset: Offset(2, 4),
+                offset: const Offset(2, 4),
                 blurRadius: 5,
                 spreadRadius: 2)
           ],
           color: tThirdColor),
-      child: Text(
+      child: const Text(
         'Tambah',
         style: TextStyle(fontSize: 20, color: tWhiteColor, fontWeight: FontWeight.bold),
       ),
@@ -128,10 +128,10 @@ class SearchdetailScreenState extends State<SearchdetailScreen> {
       //       context, MaterialPageRoute(builder: (context) => LoginPage()));
       // },
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 20),
+        margin: const EdgeInsets.symmetric(vertical: 20),
         // padding: EdgeInsets.all(15),
         alignment: Alignment.bottomCenter,
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
@@ -179,9 +179,9 @@ class SearchdetailScreenState extends State<SearchdetailScreen> {
             children: <Widget>[
               //Gambar
               _image(),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               _infoGizi(),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               _submitButton(),
               _Label(),
             ],

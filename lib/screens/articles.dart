@@ -4,7 +4,7 @@ import '../constants/articles_data.dart';
 
 // Halaman daftar artikel
 class ArticlesPage extends StatelessWidget {
-  const ArticlesPage({Key? key}) : super(key: key);
+  const ArticlesPage({super.key});
 
   @override
   Widget build(BuildContext context) {

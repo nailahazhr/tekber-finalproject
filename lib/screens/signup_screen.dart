@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:ns_apps/constants/colors.dart';
 import 'package:ns_apps/constants/images.dart';
 import 'package:ns_apps/screens/login_screen.dart';
+import 'package:ns_apps/screens/personalisasi_screen.dart';
 
 // import 'package:flutter_login_signup/src/loginPage.dart';
 // import 'package:google_fonts/google_fonts.dart';
 
 class SignUpScreen extends StatefulWidget {
-  SignUpScreen({Key? key, this.title}) : super(key: key);
+  const SignUpScreen({super.key, this.title});
 
   final String? title;
 
@@ -20,8 +21,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget _facebookButton() {
     return Container(
       height: 50,
-      margin: EdgeInsets.symmetric(vertical: 20),
-      decoration: BoxDecoration(
+      margin: const EdgeInsets.symmetric(vertical: 20),
+      decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(15)),
       ),
       child: Row(
@@ -29,7 +30,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Expanded(
             flex: 1,
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: tFacebook,
                 borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(15),
@@ -46,14 +47,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Expanded(
             flex: 5,
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: tFacebook,
                 borderRadius: BorderRadius.only(
                     bottomRight: Radius.circular(15),
                     topRight: Radius.circular(15)),
               ),
               alignment: Alignment.center,
-              child: Text('Daftar Dengan Facebook',
+              child: const Text('Daftar Dengan Facebook',
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -70,14 +71,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
       height: 50,
       decoration: BoxDecoration(
         border: Border.all(color: tGreyColorLine, width: 1.0),
-        borderRadius: BorderRadius.all(Radius.circular(15)),
+        borderRadius: const BorderRadius.all(Radius.circular(15)),
       ),
       child: Row(
         children: <Widget>[
           Expanded(
             flex: 1,
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(15),
                   topLeft: Radius.circular(15),
@@ -95,7 +96,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             flex: 5,
             child: Container(
               alignment: Alignment.center,
-              child: Text(
+              child: const Text(
                 'Daftar Dengan Google',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
               ),
@@ -108,8 +109,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _divider() {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      child: Row(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: const Row(
         children: <Widget>[
           SizedBox(
             width: 20,
@@ -142,16 +143,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _entryFieldSignUp(String title, {bool isPassword = false, IconData? icon}) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
+      margin: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
                 fontWeight: FontWeight.bold, fontSize: 15, color: tGreyColor),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           TextField(
@@ -161,11 +162,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
               fillColor: tWhiteColor, // Menggunakan tWhiteColor untuk warna latar
               filled: true,
               enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: tGreyColorLine, width: 1.0),
+                borderSide: const BorderSide(color: tGreyColorLine, width: 1.0),
                 borderRadius: BorderRadius.circular(15.0),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: tGreyColorLine, width: 1.0),
+                borderSide: const BorderSide(color: tGreyColorLine, width: 1.0),
                 borderRadius: BorderRadius.circular(15.0),
               ),
             ),
@@ -175,39 +176,51 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
+  
   Widget _submitButton() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 15),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(15)),
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const PersonalisasiScreen()),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(15)),
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
+              color: Colors.grey.shade200,
+              offset: const Offset(2, 4),
+              blurRadius: 5,
+              spreadRadius: 2,
+            ),
           ],
-          color: tThirdColor),
-      child: Text(
-        'Daftar',
-        style: TextStyle(fontSize: 20, color: Colors.white),
+          color: tThirdColor,
+        ),
+        child: const Text(
+          'Daftar',
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
       ),
     );
   }
 
+
   Widget _loginAccountLabel() {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 20),
+      margin: const EdgeInsets.symmetric(vertical: 20),
       alignment: Alignment.bottomCenter,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text(
+          const Text(
             'Apakah sudah memiliki akun ?',
             style: TextStyle(color: tGreyColor, fontSize: 16, fontWeight: FontWeight.w600),
           ),
-          SizedBox(
+          const SizedBox(
             width: 10,
           ),
           InkWell(
@@ -215,7 +228,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => LoginScreen()));
             },
-            child: Text(
+            child: const Text(
               'Masuk',
               style: TextStyle(
                   color: tSecondaryColor,
@@ -230,7 +243,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _title() {
     return Container(
-      child: Text(
+      child: const Text(
         "NutriSmart",
         textAlign: TextAlign.center,
         style: TextStyle(
@@ -258,12 +271,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: tWhiteColor,
-      body: Container(
+      body: SizedBox(
         height: height,
         child: Stack(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 30),
+              padding: const EdgeInsets.symmetric(horizontal: 30),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -271,14 +284,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   children: <Widget>[
                     SizedBox(height: height * .1),
                     _title(),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     _facebookButton(),
                     _googleButton(),
                     _divider(),
                     _emailPasswordWidget(),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     _submitButton(),
