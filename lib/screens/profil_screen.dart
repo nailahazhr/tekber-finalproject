@@ -171,7 +171,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white, backgroundColor: Colors.red,
               ),
-              child: Text('Keluar'),
+              child: const Text('Keluar'),
             ),
           ],
         );

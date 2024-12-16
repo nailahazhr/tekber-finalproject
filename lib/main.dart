@@ -52,13 +52,13 @@ class MyApp extends StatelessWidget {
         ),
         home: const Splashscreen(), // Initially display the splash screen
         routes: {
-          '/personalization': (context) => PersonalisasiScreen(),
+          '/personalization': (context) => const PersonalisasiScreen(),
           '/home': (context) => const HomePage(),
-          '/login': (context) => LoginScreen(),
-          '/signup': (context) => SignUpScreen(),
+          '/login': (context) => const LoginScreen(),
+          '/signup': (context) => const SignUpScreen(),
           '/articles': (context) => const ArticlesPage(),
           '/addMakan': (context) => const PageAddMakan(),
-          '/profil': (context) => ProfilScreen(),
+          '/profil': (context) => const ProfilScreen(),
         });
   }
 }

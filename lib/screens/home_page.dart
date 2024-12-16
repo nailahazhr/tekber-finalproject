@@ -28,13 +28,13 @@ class _HomePageState extends State<HomePage> {
       case 1:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => CalendarScreen()),
+          MaterialPageRoute(builder: (context) => const CalendarScreen()),
         );
         break;
       case 2:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ProfilScreen()),
+          MaterialPageRoute(builder: (context) => const ProfilScreen()),
         );
         break;
       default:
@@ -115,8 +115,8 @@ class _HomePageState extends State<HomePage> {
         );
       },
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 16),
-        padding: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+        margin: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -126,14 +126,14 @@ class _HomePageState extends State<HomePage> {
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 2,
               blurRadius: 5,
-              offset: Offset(0, 3),
+              offset: const Offset(0, 3),
             ),
           ],
         ),
         child: Row(
           children: [
-            Icon(Icons.search, color: Colors.grey),
-            SizedBox(height: 10),
+            const Icon(Icons.search, color: Colors.grey),
+            const SizedBox(height: 10),
             Text(
               'Mau makan apa?',
               style: TextStyle(color: Colors.grey[600], fontSize: 14),
@@ -147,11 +147,11 @@ class _HomePageState extends State<HomePage> {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('nutrisiPengguna')
-          .where('time', isGreaterThanOrEqualTo: DateTime.now().subtract(Duration(days: 1)))
+          .where('time', isGreaterThanOrEqualTo: DateTime.now().subtract(const Duration(days: 1)))
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
         if (snapshot.hasError) {
@@ -161,14 +161,14 @@ class _HomePageState extends State<HomePage> {
         final docs = snapshot.data!.docs;
 
         if (docs.isEmpty) {
-          return Center(child: Text('No data available for today.'));
+          return const Center(child: Text('No data available for today.'));
         }
 
         return FutureBuilder<Map<String, dynamic>>(
           future: _fetchNutritionDetails(docs), // Fetch referenced data
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
 
             if (snapshot.hasError) {

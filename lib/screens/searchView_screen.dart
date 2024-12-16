@@ -73,7 +73,7 @@ class MakananSearchDelegate extends SearchDelegate<String> {
       stream: makananRef
           .orderBy('nama_makanan')
           .startAt([capitalizeEachWord(query)])
-          .endAt([capitalizeEachWord(query) + '\uf8ff'])
+          .endAt(['${capitalizeEachWord(query)}\uf8ff'])
           .snapshots(),
       builder: (context, snapshot) {
         print('Query: ${capitalizeEachWord(query)}');

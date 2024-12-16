@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ns_apps/screens/home_page.dart';
 import 'package:ns_apps/screens/signup_screen.dart';
 import '../constants/colors.dart';
-import '../constants/images.dart';
 import 'package:ns_apps/provider/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {

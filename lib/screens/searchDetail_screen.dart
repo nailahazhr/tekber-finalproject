@@ -8,10 +8,10 @@ class SearchDetailScreen extends StatefulWidget {
   final Map<String, dynamic> makananData;
 
   const SearchDetailScreen({
-    Key? key, 
+    super.key, 
     required this.makananId,
     required this.makananData,
-  }) : super(key: key);
+  });
 
   @override
   State<SearchDetailScreen> createState() => _SearchDetailScreenState();
@@ -50,17 +50,17 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
     return Container(
       width: double.infinity,
       height: 250,
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: imageUrl.isNotEmpty
             ? CachedNetworkImage(
                 imageUrl: imageUrl,
                 fit: BoxFit.cover,
-                placeholder: (context, url) => Center(
+                placeholder: (context, url) => const Center(
                   child: CircularProgressIndicator(),
                 ),
-                errorWidget: (context, url, error) => Center(
+                errorWidget: (context, url, error) => const Center(
                   child: Text(
                     'Gambar makanan gagal ditampilkan',
                     style: TextStyle(
@@ -70,7 +70,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                   ),
                 ),
               )
-            : Center(
+            : const Center(
                 child: Text(
                   'Gambar makanan gagal ditampilkan',
                   style: TextStyle(
