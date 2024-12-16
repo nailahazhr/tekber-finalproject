@@ -1,11 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ns_apps/constants/colors.dart';
 import 'package:ns_apps/constants/images.dart';
 import 'package:ns_apps/screens/login_screen.dart';
 import 'package:ns_apps/screens/personalisasi_screen.dart';
-
-// import 'package:flutter_login_signup/src/loginPage.dart';
-// import 'package:google_fonts/google_fonts.dart';
+import 'package:ns_apps/provider/auth_service.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key, this.title});
@@ -17,131 +16,13 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
 
-  Widget _facebookButton() {
-    return Container(
-      height: 50,
-      margin: const EdgeInsets.symmetric(vertical: 20),
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(15)),
-      ),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 1,
-            child: Container(
-              decoration: const BoxDecoration(
-                color: tFacebook,
-                borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(15),
-                    topLeft: Radius.circular(15)),
-              ),
-              alignment: Alignment.centerRight,
-              child: Image.asset(
-                tFacebookIcon, // Sesuaikan path gambar sesuai lokasi asset
-                width: 25,
-                height: 25,
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 5,
-            child: Container(
-              decoration: const BoxDecoration(
-                color: tFacebook,
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(15),
-                    topRight: Radius.circular(15)),
-              ),
-              alignment: Alignment.center,
-              child: const Text('Daftar Dengan Facebook',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400)),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _googleButton() {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        border: Border.all(color: tGreyColorLine, width: 1.0),
-        borderRadius: const BorderRadius.all(Radius.circular(15)),
-      ),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 1,
-            child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(15),
-                  topLeft: Radius.circular(15),
-                ),
-              ),
-              alignment: Alignment.centerRight,
-              child: Image.asset(
-                tGoogleIcon,
-                width: 25,
-                height: 25,
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 5,
-            child: Container(
-              alignment: Alignment.center,
-              child: const Text(
-                'Daftar Dengan Google',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _divider() {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: const Row(
-        children: <Widget>[
-          SizedBox(
-            width: 20,
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Divider(
-                thickness: 1,
-              ),
-            ),
-          ),
-          Text('atau'),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Divider(
-                thickness: 1,
-                color: tGreyColorLine,
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 20,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _entryFieldSignUp(String title, {bool isPassword = false, IconData? icon}) {
+  Widget _entryFieldSignUp(String title,
+      {bool isPassword = false, IconData? icon, TextEditingController? controller}) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -156,10 +37,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
             height: 10,
           ),
           TextField(
+            controller: controller,
             obscureText: isPassword,
             decoration: InputDecoration(
               prefixIcon: icon != null ? Icon(icon) : null,
-              fillColor: tWhiteColor, // Menggunakan tWhiteColor untuk warna latar
+              fillColor: tWhiteColor,
               filled: true,
               enabledBorder: OutlineInputBorder(
                 borderSide: const BorderSide(color: tGreyColorLine, width: 1.0),
@@ -176,14 +58,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  
   Widget _submitButton() {
     return GestureDetector(
-      onTap: () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const PersonalisasiScreen()),
-        );
+      onTap: () async {
+        String email = _emailController.text.trim();
+        String password = _passwordController.text.trim();
+
+        if (email.isEmpty || password.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Email dan Kata Sandi harus diisi")),
+          );
+          return;
+        }
+
+        User? user = await _authService.signUpWithEmailAndPassword(email, password);
+        if (user != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const PersonalisasiScreen()),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Gagal mendaftar. Coba lagi.")),
+          );
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 15),
@@ -208,7 +106,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-
   Widget _loginAccountLabel() {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 20),
@@ -217,7 +114,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           const Text(
-            'Apakah sudah memiliki akun ?',
+            'Apakah sudah memiliki akun?',
             style: TextStyle(color: tGreyColor, fontSize: 16, fontWeight: FontWeight.w600),
           ),
           const SizedBox(
@@ -226,7 +123,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           InkWell(
             onTap: () {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => LoginScreen()));
+                  context, MaterialPageRoute(builder: (context) => const LoginScreen()));
             },
             child: const Text(
               'Masuk',
@@ -242,16 +139,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget _title() {
-    return Container(
-      child: const Text(
-        "NutriSmart",
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: 40,
-          color: tPrimaryColor,
-          fontFamily: "Nunito",
-          fontWeight: FontWeight.bold,
-        ),
+    return const Text(
+      "NutriSmart",
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontSize: 40,
+        color: tPrimaryColor,
+        fontFamily: "Nunito",
+        fontWeight: FontWeight.bold,
       ),
     );
   }
@@ -259,9 +154,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        _entryFieldSignUp("Nama Lengkap", icon: Icons.account_circle_outlined ),
-        _entryFieldSignUp("Alamat Email", icon: Icons.email_outlined),
-        _entryFieldSignUp("Kata Sandi", isPassword: true, icon: Icons.lock_outline),
+        _entryFieldSignUp("Nama Lengkap", icon: Icons.account_circle_outlined, controller: _nameController),
+        _entryFieldSignUp("Alamat Email", icon: Icons.email_outlined, controller: _emailController),
+        _entryFieldSignUp("Kata Sandi", isPassword: true, icon: Icons.lock_outline, controller: _passwordController),
       ],
     );
   }
@@ -284,23 +179,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   children: <Widget>[
                     SizedBox(height: height * .1),
                     _title(),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    _facebookButton(),
-                    _googleButton(),
-                    _divider(),
+                    const SizedBox(height: 20),
                     _emailPasswordWidget(),
-                    const SizedBox(
-                      height: 20,
-                    ),
+                    const SizedBox(height: 20),
                     _submitButton(),
                     _loginAccountLabel(),
                   ],
                 ),
               ),
             ),
-            // Positioned(top: 40, left: 0, child: _backButton()),
           ],
         ),
       ),
