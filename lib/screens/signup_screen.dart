@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ns_apps/constants/colors.dart';
+import 'package:ns_apps/constants/images.dart';
 import 'package:ns_apps/screens/login_screen.dart';
 import 'package:ns_apps/screens/personalisasi_screen.dart';
 import 'package:ns_apps/provider/auth_service.dart';
@@ -60,21 +61,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget _submitButton() {
     return GestureDetector(
       onTap: () async {
+        String name = _nameController.text.trim();
         String email = _emailController.text.trim();
         String password = _passwordController.text.trim();
 
-        if (email.isEmpty || password.isEmpty) {
+        if (name.isEmpty || email.isEmpty || password.isEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Email dan Kata Sandi harus diisi")),
+            const SnackBar(content: Text("Semua kolom harus diisi")),
           );
           return;
         }
+
+        // Ekstrak nama awal dari email
+        String firstName = email.contains('@') ? email.split('@')[0] : email;
 
         User? user = await _authService.signUpWithEmailAndPassword(email, password);
         if (user != null) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const PersonalisasiScreen()),
+            MaterialPageRoute(
+              builder: (context) => PersonalisasiScreen(
+                name: name,
+                firstName: firstName,
+              ),
+            ),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(

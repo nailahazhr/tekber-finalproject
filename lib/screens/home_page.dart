@@ -9,7 +9,9 @@ import '../constants/colors.dart';
 import '../constants/images.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final String firstName;
+  
+  const HomePage({Key? key, required this.firstName}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -20,9 +22,9 @@ class _HomePageState extends State<HomePage> {
   void _onItemTapped(BuildContext context, int index) {
     switch (index) {
       case 0:
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
+          MaterialPageRoute(builder: (context) => HomePage(firstName: widget.firstName)),
         );
         break;
       case 1:
@@ -48,12 +50,12 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         foregroundColor: Colors.white,
         backgroundColor: Colors.green,
-        title: const Row(
+        title: Row(
           children: [
             // Icon(Icons.front_hand, color: Colors.yellow),
 
             Text(
-              'Halo Hasna!',
+              'Halo ${widget.firstName}',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 20,

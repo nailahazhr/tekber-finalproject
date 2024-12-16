@@ -52,8 +52,8 @@ class MyApp extends StatelessWidget {
         ),
         home: const Splashscreen(), // Initially display the splash screen
         routes: {
-          '/personalization': (context) => const PersonalisasiScreen(),
-          '/home': (context) => const HomePage(),
+          '/personalization': (context) => const PersonalisasiScreen(name: '', firstName: '',),
+          '/home': (context) => const HomePage(firstName: '',),
           '/login': (context) => const LoginScreen(),
           '/signup': (context) => const SignUpScreen(),
           '/articles': (context) => const ArticlesPage(),

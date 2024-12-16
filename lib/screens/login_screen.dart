@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ns_apps/screens/home_page.dart';
 import 'package:ns_apps/screens/signup_screen.dart';
 import '../constants/colors.dart';
+import '../constants/images.dart';
 import 'package:ns_apps/provider/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -71,9 +72,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
         User? user = await _authService.signInWithEmailAndPassword(email, password);
         if (user != null) {
+          // Ekstrak nama awal dari email
+          String firstName = email.contains('@') ? email.split('@')[0] : email;
+
+          // Navigasi ke HomePage dengan nama awal
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
+            MaterialPageRoute(
+              builder: (context) => HomePage(firstName: firstName),
+            ),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(

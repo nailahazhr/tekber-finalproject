@@ -4,7 +4,7 @@ import '../constants/images.dart';
 import 'package:ns_apps/screens/home_page.dart';
 
 class PersonalisasiScreen extends StatefulWidget {
-  const PersonalisasiScreen({super.key, this.title});
+  const PersonalisasiScreen({super.key, this.title, required String name, required String firstName});
 
   final String? title;
 
@@ -161,7 +161,7 @@ class _PersonalisasiScreenState extends State<PersonalisasiScreen> {
       onTap: () {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
+          MaterialPageRoute(builder: (context) => const HomePage(firstName: '',)),
         );
       },
       child: Container(
