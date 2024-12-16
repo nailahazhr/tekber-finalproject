@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:ns_apps/data_to_cloud/pageAddMakan.dart';
 import 'package:ns_apps/screens/calendar_screen.dart';
 import 'package:ns_apps/screens/profil_screen.dart';
-import 'package:ns_apps/screens/searchDetail_screen.dart';
 import 'package:ns_apps/screens/articles.dart';
+import 'package:ns_apps/screens/searchView_screen.dart';
 import '../constants/colors.dart';
 import '../constants/images.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   // Fungsi untuk menangani perubahan halaman pada bottom navigation bar
   void _onItemTapped(BuildContext context, int index) {
     switch (index) {
@@ -22,8 +27,7 @@ class HomePage extends StatelessWidget {
       case 1:
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (context) => CalendarScreen()),
+          MaterialPageRoute(builder: (context) => CalendarScreen()),
         );
         break;
       case 2:
@@ -42,7 +46,8 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: tWhiteColor,
       appBar: AppBar(
-         foregroundColor:Colors.white, backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.green,
         title: const Row(
           children: [
             Icon(Icons.front_hand, color: Colors.yellow),
@@ -61,7 +66,8 @@ class HomePage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-              icon: const Icon(Icons.menu, color: Colors.white), onPressed: () {}),
+              icon: const Icon(Icons.menu, color: Colors.white),
+              onPressed: () {}),
         ],
       ),
       body: SingleChildScrollView(
@@ -106,13 +112,39 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildSearchBar() {
-    return TextField(
-      decoration: InputDecoration(
-        hintText: 'Mau makan apa?',
-        prefixIcon: const Icon(Icons.search),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-        filled: true,
-        fillColor: Colors.grey[200],
+    return GestureDetector(
+      onTap: () {
+        showSearch(
+          context: context,
+          delegate: MakananSearchDelegate(),
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.search, color: Colors.grey),
+            SizedBox(height: 10),
+            Text(
+              'Mau makan apa?',
+              style: TextStyle(color: Colors.grey[600], fontSize: 14),
+            ),
+          ],
+        ),
       ),
     );
   }
