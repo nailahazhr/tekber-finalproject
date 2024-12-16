@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ns_apps/data_to_cloud/pageAddMakan.dart';
 import 'package:ns_apps/screens/calendar_screen.dart';
@@ -36,7 +37,6 @@ class HomePage extends StatelessWidget {
         return;
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,10 +45,10 @@ class HomePage extends StatelessWidget {
          foregroundColor:Colors.white, backgroundColor: Colors.green,
         title: const Row(
           children: [
-            Icon(Icons.front_hand, color: Colors.yellow),
-            SizedBox(width: 8),
+            // Icon(Icons.front_hand, color: Colors.yellow),
+
             Text(
-              'Halo Hasna',
+              'Halo Hasna!',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 20,
@@ -59,10 +59,7 @@ class HomePage extends StatelessWidget {
             SizedBox(width: 8),
           ],
         ),
-        actions: [
-          IconButton(
-              icon: const Icon(Icons.menu, color: Colors.white), onPressed: () {}),
-        ],
+
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -116,81 +113,157 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildNutritionStats() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            blurRadius: 10,
-            spreadRadius: 2,
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          const Text('Statistik Bulan Ini',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors.black)),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildCircularStat('2159', 'kcal left'),
-              _buildStatCircle('0/123 g', 'carbs'),
-              _buildStatCircle('0/59 g', 'fat'),
-              _buildStatCircle('0/80 g', 'protein'),
-            ],
-          ),
-        ],
-      ),
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('nutrisiPengguna')
+          .where('time', isGreaterThanOrEqualTo: DateTime.now().subtract(Duration(days: 1)))
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+
+        final docs = snapshot.data!.docs;
+
+        if (docs.isEmpty) {
+          return Center(child: Text('No data available for today.'));
+        }
+
+        return FutureBuilder<Map<String, dynamic>>(
+          future: _fetchNutritionDetails(docs), // Fetch referenced data
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+
+            final nutritionData = snapshot.data ?? {};
+
+            // Current values
+            int carbs = nutritionData["karbohidrat"] ?? 0;
+            int fat = nutritionData["lemak"] ?? 0;
+            int protein = nutritionData["protein"] ?? 0;
+            int calories = nutritionData["kalori"] ?? 0;
+
+            // Target values
+            const int carbsTarget = 200;
+            const int fatTarget = 59;
+            const int proteinTarget = 80;
+            const int caloriesTarget = 2159;
+
+            return Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  const Text('Statistik Bulan Ini',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.black)),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildCircularStat(
+                          currentValue: calories,
+                          targetValue: caloriesTarget,
+                          label: 'kalori'),
+                      _buildCircularStat(
+                          currentValue: carbs,
+                          targetValue: carbsTarget,
+                          label: 'karbohidrat'),
+                      _buildCircularStat(
+                          currentValue: fat,
+                          targetValue: fatTarget,
+                          label: 'lemak'),
+                      _buildCircularStat(
+                          currentValue: protein,
+                          targetValue: proteinTarget,
+                          label: 'protein'),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
-  Widget _buildCircularStat(String value, String label) {
+  Future<Map<String, dynamic>> _fetchNutritionDetails(List<QueryDocumentSnapshot> docs) async {
+    Map<String, dynamic> aggregatedData = {
+      "karbohidrat": 0,
+      "lemak": 0,
+      "protein": 0,
+      "kalori": 0,
+    };
+
+    for (var doc in docs) {
+      // Resolve the `id` reference
+      DocumentReference ref = doc['id'];
+      DocumentSnapshot detailSnapshot = await ref.get();
+
+      if (detailSnapshot.exists) {
+        var detailData = detailSnapshot.data() as Map<String, dynamic>;
+
+        // Aggregate nutritional values
+        aggregatedData["karbohidrat"] += detailData["karbohidrat"] ?? 0;
+        aggregatedData["lemak"] += detailData["lemak"] ?? 0;
+        aggregatedData["protein"] += detailData["protein"] ?? 0;
+        aggregatedData["kalori"] += detailData["kalori"] ?? 0;
+      }
+    }
+
+    return aggregatedData;
+  }
+
+  Widget _buildCircularStat({
+    required int currentValue,
+    required int targetValue,
+    required String label,
+  }) {
+    double progress = currentValue / targetValue;
+    progress = progress.clamp(0.0, 1.0); // Ensure value is between 0 and 1
+
     return Column(
       children: [
         Stack(
           alignment: Alignment.center,
           children: [
             CircularProgressIndicator(
-              value: 0.3,
+              value: progress,
               backgroundColor: Colors.grey[200],
               valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
               strokeWidth: 6,
             ),
-            Text(
-              value,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
           ],
         ),
         const SizedBox(height: 8),
-        Text(label),
-      ],
-    );
-  }
-
-  Widget _buildStatCircle(String value, String label) {
-    return Column(
-      children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.green, width: 3),
-          ),
+        Text(
+          '$currentValue/$targetValue',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
-        const SizedBox(height: 8),
-        Text(value, style: const TextStyle(fontSize: 14)),
-        Text(label, style: const TextStyle(fontSize: 12)),
+        Text(label),
       ],
     );
   }

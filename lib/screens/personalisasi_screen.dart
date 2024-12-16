@@ -156,7 +156,6 @@ class _PersonalisasiScreenState extends State<PersonalisasiScreen> {
       ],
     );
   }
-
   Widget _submitButton() {
     return GestureDetector(
       onTap: () {
