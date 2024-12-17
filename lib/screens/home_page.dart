@@ -42,6 +42,38 @@ class _HomePageState extends State<HomePage> {
         return;
     }
   }
+
+  // Fungsi untuk menghapus data nutrisi
+  Future<void> _deleteNutrition(String docId) async {
+    try {
+      await FirebaseFirestore.instance.collection('nutrisiPengguna').doc(docId).delete();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Data berhasil dihapus!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menghapus data: $e')),
+      );
+    }
+  }
+
+  // Fungsi untuk mengupdate data nutrisi
+  Future<void> _updateNutrition(String docId, Map<String, dynamic> newData) async {
+    try {
+      await FirebaseFirestore.instance.collection('nutrisiPengguna').doc(docId).update({
+        ...newData,
+        'time': DateTime.now(), // Menyimpan waktu update
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Data berhasil diupdate!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal update data: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -237,6 +269,58 @@ class _HomePageState extends State<HomePage> {
             );
           },
         );
+        
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: docs.length,
+          itemBuilder: (context, index) {
+            final doc = docs[index];
+            final data = doc.data() as Map<String, dynamic>?;
+
+            if (data == null) {
+              return const SizedBox.shrink(); // Jika data null, skip
+            }
+
+            return Card(
+              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: ListTile(
+                title: Text(data['nama_makanan'] ?? 'Nama Makanan'),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Karbohidrat: ${data['karbohidrat'] ?? 0} g'),
+                    Text('Protein: ${data['protein'] ?? 0} g'),
+                    Text('Lemak: ${data['lemak'] ?? 0} g'),
+                    Text('Kalori: ${data['kalori'] ?? 0} kcal'),
+                    Text('Tanggal Makan: ${data['tgl_makan'] ?? '-'}'),
+                  ],
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.edit, color: Colors.blue),
+                      onPressed: () {
+                        _updateNutrition(doc.id, {
+                          'nama_makanan': 'Updated Makanan',
+                          'tgl_makan': DateTime.now().toString(),
+                        });
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        _deleteNutrition(doc.id); // Panggil fungsi hapus
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+        
       },
     );
   }
