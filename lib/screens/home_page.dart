@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:ns_apps/data_to_cloud/pageAddMakan.dart';
 import 'package:ns_apps/screens/calendar_screen.dart';
 import 'package:ns_apps/screens/profil_screen.dart';
 import 'package:ns_apps/screens/articles.dart';
@@ -251,9 +250,9 @@ class _HomePageState extends State<HomePage> {
     };
 
     for (var doc in docs) {
-      // Resolve the `id` reference
-      DocumentReference ref = doc['id'];
-      DocumentSnapshot detailSnapshot = await ref.get();
+      // Mengambil DocumentReference dari field 'id'
+      DocumentReference makananRef = doc.get('id');
+      DocumentSnapshot detailSnapshot = await makananRef.get();
 
       if (detailSnapshot.exists) {
         var detailData = detailSnapshot.data() as Map<String, dynamic>;
@@ -275,7 +274,7 @@ class _HomePageState extends State<HomePage> {
     required String label,
   }) {
     double progress = currentValue / targetValue;
-    progress = progress.clamp(0.0, 1.0); // Ensure value is between 0 and 1
+    progress = progress.clamp(0.0, 1.0); 
 
     return Column(
       children: [
@@ -392,12 +391,12 @@ class _HomePageState extends State<HomePage> {
     return Builder(
       builder: (BuildContext context) {
         return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const PageAddMakan()),
-            );
-          },
+        onTap: () {
+          showSearch(
+          context: context,
+          delegate: MakananSearchDelegate(),
+          );
+        },
           child: Container(
             height: 50,
             width: 50,

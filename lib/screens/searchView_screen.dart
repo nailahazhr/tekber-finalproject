@@ -77,8 +77,6 @@ class MakananSearchDelegate extends SearchDelegate<String> {
           .snapshots(),
       builder: (context, snapshot) {
         print('Query: ${capitalizeEachWord(query)}');
-        print('Snapshot has data: ${snapshot.hasData}');
-        print('Number of documents: ${snapshot.data?.docs.length}');
     
         if (snapshot.hasError) {
           return const Center(child: Text('Terjadi kesalahan'));

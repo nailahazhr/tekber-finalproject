@@ -19,6 +19,8 @@ class SearchDetailScreen extends StatefulWidget {
 
 class _SearchDetailScreenState extends State<SearchDetailScreen> {
   String imageUrl = '';
+  int? selectedKategori;
+  DateTime selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -36,13 +38,61 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
       if (makananDoc.exists) {
         setState(() {
           imageUrl = makananDoc.get('img') ?? '';
-          print('URL Gambar: $imageUrl');
         });
       } else {
         print('Dokumen tidak ditemukan');
       }
     } catch (e) {
       print('Error mengambil URL gambar: $e');
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context, StateSetter setStateDialog) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != selectedDate) {
+      setStateDialog(() {
+        selectedDate = picked;
+      });
+    }
+  }
+
+  Future<void> tambahNutrisiPengguna(int kategori) async {
+    try {
+      DocumentReference makananRef = FirebaseFirestore.instance
+          .collection('makanan')
+          .doc(widget.makananId);
+
+      await FirebaseFirestore.instance.collection('nutrisiPengguna').add({
+        'id': makananRef,
+        'tag': kategori,
+        'time': DateTime.now(),
+        'tgl_makan': selectedDate,
+      });
+
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Data nutrisi berhasil ditambahkan'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      
+    } catch (e) {
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal menambahkan data: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      rethrow;
     }
   }
 
@@ -72,7 +122,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
               )
             : const Center(
                 child: Text(
-                  'Gambar makanan gagal ditampilkan',
+                  'Menampilkan gambar...',
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 16,
@@ -156,22 +206,101 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
   }
 
   Widget _submitButton() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 15),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
+    return InkWell(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Tambah Makanan'),
+            content: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    DropdownButton<int>(
+                      isExpanded: true,
+                      value: selectedKategori,
+                      hint: const Text('Pilih kategori'),
+                      items: const [
+                        DropdownMenuItem(value: 1, child: Text('Sarapan')),
+                        DropdownMenuItem(value: 2, child: Text('Makan Siang')),
+                        DropdownMenuItem(value: 3, child: Text('Makan Malam')),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          selectedKategori = value;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    InkWell(
+                      onTap: () => _selectDate(context, setState),
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Tanggal: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                            const Icon(Icons.calendar_today),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Batal'),
+              ),
+              TextButton(
+                onPressed: () {
+                  if (selectedKategori == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Silakan pilih kategori terlebih dahulu'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+                  Navigator.pop(context);
+                  tambahNutrisiPengguna(selectedKategori!);
+                },
+                child: const Text('Simpan'),
+              ),
+            ],
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(15)),
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.shade200,
-                offset: const Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
+              color: Colors.grey.shade200,
+              offset: const Offset(2, 4),
+              blurRadius: 5,
+              spreadRadius: 2
+            )
           ],
-          color: tThirdColor),
-      child: const Text(
-        'Tambah',
-        style: TextStyle(fontSize: 20, color: tWhiteColor, fontWeight: FontWeight.bold),
+          color: tThirdColor
+        ),
+        child: const Text(
+          'Tambah',
+          style: TextStyle(fontSize: 20, color: tWhiteColor, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
@@ -184,7 +313,6 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
       // },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 20),
-        // padding: EdgeInsets.all(15),
         alignment: Alignment.bottomCenter,
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -220,7 +348,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
-          widget.makananData['title'] ?? '', 
+          widget.makananData['nama_makanan'] ?? '', 
           style: const TextStyle(
             color: tThirdColor,
             fontWeight: FontWeight.bold)),

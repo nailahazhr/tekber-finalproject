@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ns_apps/data_to_cloud/pageAddMakan.dart';
 import 'package:ns_apps/screens/profil_screen.dart';
-import 'package:ns_apps/screens/searchDetail_screen.dart';
 import 'package:ns_apps/screens/splash_screen.dart';
 import 'package:ns_apps/screens/personalisasi_screen.dart';
 import 'package:ns_apps/screens/home_page.dart';
@@ -57,7 +55,6 @@ class MyApp extends StatelessWidget {
           '/login': (context) => const LoginScreen(),
           '/signup': (context) => const SignUpScreen(),
           '/articles': (context) => const ArticlesPage(),
-          '/addMakan': (context) => const PageAddMakan(),
           '/profil': (context) => const ProfilScreen(),
         });
   }
