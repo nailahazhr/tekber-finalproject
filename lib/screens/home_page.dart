@@ -4,12 +4,14 @@ import 'package:ns_apps/screens/calendar_screen.dart';
 import 'package:ns_apps/screens/profil_screen.dart';
 import 'package:ns_apps/screens/articles.dart';
 import 'package:ns_apps/screens/searchView_screen.dart';
+import 'package:ns_apps/screens/searchDetail_screen.dart';
+import 'package:ns_apps/screens/edit_delete_screen.dart';
 import '../constants/colors.dart';
 import '../constants/images.dart';
 
 class HomePage extends StatefulWidget {
   final String firstName;
-  
+   
   const HomePage({Key? key, required this.firstName}) : super(key: key);
 
   @override
@@ -43,34 +45,35 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Fungsi untuk menghapus data nutrisi
-  Future<void> _deleteNutrition(String docId) async {
-    try {
-      await FirebaseFirestore.instance.collection('nutrisiPengguna').doc(docId).delete();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Data berhasil dihapus!')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal menghapus data: $e')),
-      );
-    }
+  // Menyimpan data makanan berdasarkan kategori
+  final List<String> _categories = ["Sarapan", "Makan Siang", "Makan Malam"];
+  String _selectedCategory = "Sarapan"; // Default kategori yang terpilih
+
+  // Mendapatkan data makanan dari Firestore
+  Stream<QuerySnapshot> getFoodData() {
+    return FirebaseFirestore.instance
+        .collection('nutrisiPengguna')
+        .where('kategori', isEqualTo: _selectedCategory)
+        .snapshots();
   }
 
-  // Fungsi untuk mengupdate data nutrisi
-  Future<void> _updateNutrition(String docId, Map<String, dynamic> newData) async {
-    try {
-      await FirebaseFirestore.instance.collection('nutrisiPengguna').doc(docId).update({
-        ...newData,
-        'time': DateTime.now(), // Menyimpan waktu update
+  // Navigasi ke halaman detail pencarian makanan
+  void navigateToSearchDetailScreen() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SearchDetailScreen(
+          makananId: '', 
+          makananData: {}, 
+        ),
+      ),
+    );
+
+    // Cek jika result mengembalikan kategori yang baru dipilih
+    if (result != null && result is String) {
+      setState(() {
+        _selectedCategory = result;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Data berhasil diupdate!')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal update data: $e')),
-      );
     }
   }
 
@@ -83,8 +86,6 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.green,
         title: Row(
           children: [
-            // Icon(Icons.front_hand, color: Colors.yellow),
-
             Text(
               'Halo ${widget.firstName}',
               style: TextStyle(
@@ -97,6 +98,12 @@ class _HomePageState extends State<HomePage> {
             SizedBox(width: 8),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: navigateToSearchDetailScreen, // Pencarian makanan
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -124,20 +131,114 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 20),
             _buildSectionHeader('Makan Malam', Icons.bakery_dining_outlined),
             _buildMealSection(),
+            const SizedBox(height: 20),
+            
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: _categories.map((category) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ChoiceChip(
+                    label: Text(category),
+                    selected: _selectedCategory == category,
+                    onSelected: (selected) {
+                      setState(() {
+                        _selectedCategory = category;
+                      });
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 20),
+
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: getFoodData(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(child: Text('Belum ada makanan ditambahkan.'));
+                  }
+
+                  final foods = snapshot.data!.docs;
+
+                  return ListView.builder(
+                    shrinkWrap: true, // agar tidak error di dalam SingleChildScrollView
+                    physics: NeverScrollableScrollPhysics(), // nonaktifkan scroll tambahan
+                    itemCount: foods.length,
+                    itemBuilder: (context, index) {
+                      final food = foods[index];
+                      final foodId = food.id;
+                      final foodName = food['nama_makanan'];
+                      final foodTime = food['tgl_makan'];
+                      final category = food['kategori'];
+
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: ListTile(
+                          title: Text(foodName),
+                          subtitle: Text("Tanggal: $foodTime"),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditDeleteScreen(
+                                        foodId: foodId,
+                                        foodData: food.data() as Map<String, dynamic>,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete),
+                                onPressed: () async {
+                                  await FirebaseFirestore.instance
+                                      .collection('nutrisiPengguna')
+                                      .doc(foodId)
+                                      .delete();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            Center(
+              child: ElevatedButton(
+                onPressed: navigateToSearchDetailScreen,
+                child: const Text('Tambah Makanan'),
+              ),
+            ),
           ],
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today), label: 'Calendar'),
+          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'Calendar'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
         onTap: (index) => _onItemTapped(context, index),
       ),
     );
   }
+
 
   Widget _buildSearchBar() {
     return GestureDetector(
@@ -269,58 +370,6 @@ class _HomePageState extends State<HomePage> {
             );
           },
         );
-        
-        return ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: docs.length,
-          itemBuilder: (context, index) {
-            final doc = docs[index];
-            final data = doc.data() as Map<String, dynamic>?;
-
-            if (data == null) {
-              return const SizedBox.shrink(); // Jika data null, skip
-            }
-
-            return Card(
-              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-              child: ListTile(
-                title: Text(data['nama_makanan'] ?? 'Nama Makanan'),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Karbohidrat: ${data['karbohidrat'] ?? 0} g'),
-                    Text('Protein: ${data['protein'] ?? 0} g'),
-                    Text('Lemak: ${data['lemak'] ?? 0} g'),
-                    Text('Kalori: ${data['kalori'] ?? 0} kcal'),
-                    Text('Tanggal Makan: ${data['tgl_makan'] ?? '-'}'),
-                  ],
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.blue),
-                      onPressed: () {
-                        _updateNutrition(doc.id, {
-                          'nama_makanan': 'Updated Makanan',
-                          'tgl_makan': DateTime.now().toString(),
-                        });
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () {
-                        _deleteNutrition(doc.id); // Panggil fungsi hapus
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-        
       },
     );
   }
