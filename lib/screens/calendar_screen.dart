@@ -58,8 +58,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
         StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
             .collection('nutrisiPengguna')
-            .where('time', isGreaterThanOrEqualTo: DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day))
-            .where('time', isLessThan: DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day).add(const Duration(days: 1)).subtract(const Duration(microseconds: 1)))
+            .where('tgl_makan', isGreaterThanOrEqualTo: DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day))
+            .where('tgl_makan', isLessThan: DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day).add(const Duration(days: 1)).subtract(const Duration(microseconds: 1)))
             .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
