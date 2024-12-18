@@ -75,6 +75,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: tWhiteColor,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         foregroundColor: Colors.white,
         backgroundColor: Colors.green,
         title: Row(
@@ -112,13 +113,8 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 8),
             _buildArticles(context),
             const SizedBox(height: 20),
-            _buildSectionHeader('Sarapan', Icons.free_breakfast),
-            _buildMealSection(),
             const SizedBox(height: 20),
-            _buildSectionHeader('Makan Siang', Icons.lunch_dining),
-            _buildMealSection(),
-            const SizedBox(height: 20),
-            _buildSectionHeader('Makan Malam', Icons.bakery_dining_outlined),
+            _buildSectionHeader('List Makanan Dikonsumsi', Icons.lunch_dining),
             _buildMealSection(),
           ],
         ),
@@ -544,7 +540,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         subtitle: Text(
-                          'Ditambahkan: ${_formatDate(nutrisiDoc['tgl_makan'].toDate())}',
+                          'Tanggal Makan: ${_formatDate(nutrisiDoc['tgl_makan'].toDate())}',
                           style: TextStyle(color: Colors.grey[600]),
                         ),
                         trailing: Row(

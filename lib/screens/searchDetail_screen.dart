@@ -8,7 +8,7 @@ class SearchDetailScreen extends StatefulWidget {
   final Map<String, dynamic> makananData;
 
   const SearchDetailScreen({
-    super.key, 
+    super.key,
     required this.makananId,
     required this.makananData,
   });
@@ -47,7 +47,8 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
     }
   }
 
-  Future<void> _selectDate(BuildContext context, StateSetter setStateDialog) async {
+  Future<void> _selectDate(
+      BuildContext context, StateSetter setStateDialog) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedDate,
@@ -75,17 +76,16 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
       });
 
       if (!mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Data nutrisi berhasil ditambahkan'),
           backgroundColor: Colors.green,
         ),
       );
-      
     } catch (e) {
       if (!mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Gagal menambahkan data: $e'),
@@ -134,7 +134,14 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
   }
 
   Widget _infoGizi() {
-    List<String> titles = ['Kalori', 'Karbohidrat', 'Protein', 'Lemak', 'Gula', 'Garam'];
+    List<String> titles = [
+      'Kalori',
+      'Karbohidrat',
+      'Protein',
+      'Lemak',
+      'Gula',
+      'Garam'
+    ];
     List<String> values = [
       '${widget.makananData['kalori']} ${widget.makananData['satuanKalori'] ?? 'kcal'}',
       '${widget.makananData['karbohidrat']} ${widget.makananData['satuanKarbohidrat'] ?? 'g'}',
@@ -159,7 +166,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
           ),
         ),
         const SizedBox(height: 20),
-        for (int i = 0; i < titles.length; i += 3)...[
+        for (int i = 0; i < titles.length; i += 3) ...[
           Card(
             color: const Color(0xFFF0FFF0),
             shape: RoundedRectangleBorder(
@@ -286,20 +293,19 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
         padding: const EdgeInsets.symmetric(vertical: 15),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(15)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-              color: Colors.grey.shade200,
-              offset: const Offset(2, 4),
-              blurRadius: 5,
-              spreadRadius: 2
-            )
-          ],
-          color: tThirdColor
-        ),
+            borderRadius: const BorderRadius.all(Radius.circular(15)),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: Colors.grey.shade200,
+                  offset: const Offset(2, 4),
+                  blurRadius: 5,
+                  spreadRadius: 2)
+            ],
+            color: tThirdColor),
         child: const Text(
           'Tambah',
-          style: TextStyle(fontSize: 20, color: tWhiteColor, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: 20, color: tWhiteColor, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -319,7 +325,8 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
           children: <Widget>[
             Text(
               'Tambah',
-              style: TextStyle(color: tGreyColor, fontSize: 16, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  color: tGreyColor, fontSize: 16, fontWeight: FontWeight.w600),
             ),
             SizedBox(
               width: 4,
@@ -333,7 +340,8 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
             ),
             Text(
               ', Nikmati Langganan Premium!',
-              style: TextStyle(color: tGreyColor, fontSize: 16, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  color: tGreyColor, fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -347,11 +355,9 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text(
-          widget.makananData['nama_makanan'] ?? '', 
-          style: const TextStyle(
-            color: tThirdColor,
-            fontWeight: FontWeight.bold)),
+        title: Text(widget.makananData['nama_makanan'] ?? '',
+            style: const TextStyle(
+                color: tThirdColor, fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
