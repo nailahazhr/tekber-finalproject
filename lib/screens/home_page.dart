@@ -6,8 +6,7 @@ import 'package:ns_apps/screens/profil_screen.dart';
 import 'package:ns_apps/screens/articles.dart';
 import 'package:ns_apps/screens/searchView_screen.dart';
 import 'package:ns_apps/screens/searchDetail_screen.dart';
-import 'package:ns_apps/screens/update_screen.dart';
-import 'package:ns_apps/screens/delete_screen.dart';
+import 'package:ns_apps/screens/update_screen.dart'; 
 import '../constants/colors.dart';
 import '../constants/images.dart';
 
@@ -456,7 +455,7 @@ class _HomePageState extends State<HomePage> {
               return Center(child: Text('Error: ${snapshot.error}'));
             }
 
-            final docs = snapshot.data!.docs;
+            final docs = snapshot.data?.docs ?? [];
 
             if (docs.isEmpty) {
               return const Center(
@@ -479,8 +478,7 @@ class _HomePageState extends State<HomePage> {
                 return FutureBuilder<DocumentSnapshot>(
                   future: makananRef.get(),
                   builder: (context, makananSnapshot) {
-                    if (makananSnapshot.connectionState ==
-                        ConnectionState.waiting) {
+                    if (makananSnapshot.connectionState == ConnectionState.waiting) {
                       return const Card(
                         child: ListTile(
                           leading: CircularProgressIndicator(),
@@ -489,20 +487,16 @@ class _HomePageState extends State<HomePage> {
                       );
                     }
 
-                    if (!makananSnapshot.hasData ||
-                        !makananSnapshot.data!.exists) {
+                    if (!makananSnapshot.hasData || !makananSnapshot.data!.exists) {
                       return const SizedBox();
                     }
 
-                    final makananData =
-                        makananSnapshot.data!.data() as Map<String, dynamic>;
-                    final namaMakanan =
-                        makananData['nama_makanan'] ?? 'Tidak ada nama';
+                    final makananData = makananSnapshot.data!.data() as Map<String, dynamic>;
+                    final namaMakanan = makananData['nama_makanan'] ?? 'Tidak ada nama';
                     final imageUrl = makananData['img'] ?? '';
 
                     return Card(
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 4),
+                      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                       elevation: 2,
                       child: ListTile(
                         contentPadding: const EdgeInsets.all(8),
@@ -522,14 +516,11 @@ class _HomePageState extends State<HomePage> {
                                     placeholder: (context, url) => const Center(
                                       child: CircularProgressIndicator(),
                                     ),
-                                    errorWidget: (context, url, error) =>
-                                        const Center(
-                                      child: Icon(Icons.broken_image,
-                                          color: Colors.grey),
+                                    errorWidget: (context, url, error) => const Center(
+                                      child: Icon(Icons.broken_image, color: Colors.grey),
                                     ),
                                   )
-                                : const Icon(Icons.fastfood,
-                                    color: Colors.grey, size: 30),
+                                : const Icon(Icons.fastfood, color: Colors.grey, size: 30),
                           ),
                         ),
                         title: Text(
@@ -578,12 +569,12 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Tambahkan fungsi helper untuk format tanggal
+  // Fungsi helper untuk format tanggal
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute}';
   }
 
-  // Tambahkan fungsi untuk konfirmasi penghapusan
+  // Fungsi untuk konfirmasi penghapusan
   void _confirmDelete(String makananId) {
     showDialog(
       context: context,
@@ -601,10 +592,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () async {
                 Navigator.of(context).pop();
                 try {
-                  await FirebaseFirestore.instance
-                      .collection('nutrisiPengguna')
-                      .doc(makananId)
-                      .delete();
+                  await FirebaseFirestore.instance.collection('nutrisiPengguna').doc(makananId).delete();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Makanan berhasil dihapus')),
                   );
@@ -621,3 +609,4 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
