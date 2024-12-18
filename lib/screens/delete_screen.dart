@@ -13,15 +13,24 @@ class DeleteMakananScreen extends StatelessWidget {
 
   Future<void> deleteMakanan(BuildContext context) async {
     try {
+      // Hapus data dari Firestore
       await FirebaseFirestore.instance.collection('makanan').doc(makananId).delete();
+
+      // Tampilkan SnackBar untuk memberi tahu pengguna
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Data makanan berhasil dihapus'),
           backgroundColor: Colors.green,
         ),
       );
-      Navigator.pop(context); // Kembali ke screen sebelumnya
+
+      // Menunggu beberapa detik sebelum kembali ke screen sebelumnya
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Kembali ke screen sebelumnya
+      Navigator.pop(context);
     } catch (e) {
+      // Tampilkan SnackBar jika terjadi kesalahan
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Gagal menghapus data: $e'),

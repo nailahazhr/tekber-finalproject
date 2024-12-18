@@ -20,14 +20,28 @@ class UpdateMakananScreen extends StatefulWidget {
 class _UpdateMakananScreenState extends State<UpdateMakananScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _namaMakananController;
-  late TextEditingController _karbohidratController;
+  DateTime selectedDate = DateTime.now();
+  int? selectedKategori;
 
   @override
   void initState() {
     super.initState();
     // Mengisi form dengan data yang sudah ada
     _namaMakananController = TextEditingController(text: widget.makananData['nama_makanan']);
-    _karbohidratController = TextEditingController(text: widget.makananData['karbohidrat'].toString());
+  }
+
+  Future<void> _selectDate(BuildContext context, StateSetter setState) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null && pickedDate != selectedDate) {
+      setState(() {
+        selectedDate = pickedDate;
+      });
+    }
   }
 
   Future<void> updateMakanan() async {
@@ -35,7 +49,8 @@ class _UpdateMakananScreenState extends State<UpdateMakananScreen> {
       try {
         await FirebaseFirestore.instance.collection('makanan').doc(widget.makananId).update({
           'nama_makanan': _namaMakananController.text,
-          'karbohidrat': int.parse(_karbohidratController.text),
+          'kategori': selectedKategori,
+          'tanggal': selectedDate,
         });
 
         if (mounted) {
@@ -83,21 +98,46 @@ class _UpdateMakananScreenState extends State<UpdateMakananScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _karbohidratController,
-                decoration: const InputDecoration(
-                  labelText: 'Karbohidrat (g)',
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Karbohidrat tidak boleh kosong';
-                  }
-                  if (int.tryParse(value) == null) {
-                    return 'Karbohidrat harus berupa angka';
-                  }
-                  return null;
-                },
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DropdownButton<int>(
+                    isExpanded: true,
+                    value: selectedKategori,
+                    hint: const Text('Pilih kategori'),
+                    items: const [
+                      DropdownMenuItem(value: 1, child: Text('Sarapan')),
+                      DropdownMenuItem(value: 2, child: Text('Makan Siang')),
+                      DropdownMenuItem(value: 3, child: Text('Makan Malam')),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        selectedKategori = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  InkWell(
+                    onTap: () => _selectDate(context, setState),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Tanggal: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const Icon(Icons.calendar_today),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 24),
               ElevatedButton(

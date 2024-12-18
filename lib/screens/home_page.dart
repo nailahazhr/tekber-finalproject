@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ns_apps/screens/calendar_screen.dart';
 import 'package:ns_apps/screens/profil_screen.dart';
 import 'package:ns_apps/screens/articles.dart';
 import 'package:ns_apps/screens/searchView_screen.dart';
 import 'package:ns_apps/screens/searchDetail_screen.dart';
-import 'package:ns_apps/screens/update_screen.dart';
+import 'package:ns_apps/screens/update_screen.dart'; 
 import 'package:ns_apps/screens/delete_screen.dart';
 import '../constants/colors.dart';
 import '../constants/images.dart';
@@ -46,13 +47,23 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void tambahMakanan(String namaMakanan) {
-    FirebaseFirestore.instance.collection('nutrisiPengguna').add({
-      'nama': namaMakanan,
-      'tgl_makan': DateTime.now(),
-    }).then((value) {
+  void tambahMakanan(String MakananId) async {
+    try {
+      await FirebaseFirestore.instance.collection('nutrisiPengguna').add({
+        'nama': MakananId,
+        'tgl_makan': DateTime.now(),
+      });
+      // Jika berhasil, kembali ke halaman sebelumnya dan beri feedback pengguna
       Navigator.pop(context); // Kembali ke HomePage
-    });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Makanan berhasil ditambahkan!')),
+      );
+    } catch (e) {
+      // Menangani error jika ada masalah saat penambahan data
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menambahkan makanan: $e')),
+      );
+    }
   }
 
   @override
@@ -428,8 +439,7 @@ class _HomePageState extends State<HomePage> {
 
         // Bagian List Makanan (Dari Firestore)
         StreamBuilder<QuerySnapshot>(
-          stream:
-              FirebaseFirestore.instance.collection('nutrisiPengguna').snapshots(),
+          stream: FirebaseFirestore.instance.collection('nutrisiPengguna').snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -451,13 +461,37 @@ class _HomePageState extends State<HomePage> {
               itemCount: docs.length,
               itemBuilder: (context, index) {
                 var item = docs[index].data() as Map<String, dynamic>;
-                String namaMakanan = item['nama'] ?? 'Makanan';
-                String id = docs[index].id;
+                String namaMakanan = item['nama'] ?? 'Makanan'; // Ambil nama makanan
+                String makananId = docs[index].id; // Ambil ID makanan
+                String imageUrl = item['imageUrl'] ?? ''; // Ambil URL gambar makanan
 
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   child: ListTile(
-                    leading: const Icon(Icons.fastfood, color: Colors.green),
+                    leading: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: imageUrl.isNotEmpty
+                            ? CachedNetworkImage(
+                                imageUrl: imageUrl,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                                errorWidget: (context, url, error) => const Center(
+                                  child: Icon(Icons.broken_image, color: Colors.grey),
+                                ),
+                              )
+                            : const Center(
+                                child: Icon(Icons.fastfood, color: Colors.grey),
+                              ),
+                      ),
+                    ),
                     title: Text(namaMakanan),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -465,38 +499,46 @@ class _HomePageState extends State<HomePage> {
                         // Saat menekan tombol Edit
                         IconButton(
                           icon: const Icon(Icons.edit, color: Colors.blue),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  // Mengambil data makanan dari Firestore
-                                  var item = docs[index].data() as Map<String, dynamic>;
-                                  String makananId = docs[index].id;
-                                  // Menyediakan makananId dan makananData saat navigasi
-                                  return UpdateMakananScreen(
-                                    makananId: makananId,
-                                    makananData: item,
-                                  );
-                                },
-                              ),
-                            );
+                          onPressed: () async {
+                            try {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    // Menyediakan makananId dan makananData saat navigasi
+                                    return UpdateMakananScreen(
+                                      makananId: makananId,
+                                      makananData: item,
+                                    );
+                                  },
+                                ),
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Makanan berhasil diperbarui.')),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Gagal memperbarui makanan: $e')),
+                              );
+                            }
                           },
                         ),
                         // Saat menekan tombol Delete
                         IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  String makananId = docs[index].id;
-                                  // Menyediakan makananId saat navigasi ke DeleteMakananScreen
-                                  return DeleteMakananScreen(makananId: makananId);
-                                },
-                              ),
-                            );
+                          onPressed: () async {
+                            try {
+                              // Menghapus item dari Firestore berdasarkan ID
+                              await FirebaseFirestore.instance.collection('nutrisiPengguna').doc(makananId).delete();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Makanan berhasil dihapus.')),
+                              );
+                            } catch (e) {
+                              // Menangani error jika ada masalah penghapusan
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Gagal menghapus item: $e')),
+                              );
+                            }
                           },
                         ),
                       ],
