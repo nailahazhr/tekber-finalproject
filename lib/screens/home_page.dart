@@ -6,14 +6,14 @@ import 'package:ns_apps/screens/profil_screen.dart';
 import 'package:ns_apps/screens/articles.dart';
 import 'package:ns_apps/screens/searchView_screen.dart';
 import 'package:ns_apps/screens/searchDetail_screen.dart';
-import 'package:ns_apps/screens/update_screen.dart'; 
+import 'package:ns_apps/screens/update_screen.dart';
 import 'package:ns_apps/screens/delete_screen.dart';
 import '../constants/colors.dart';
 import '../constants/images.dart';
 
 class HomePage extends StatefulWidget {
   final String firstName;
-   
+
   const HomePage({Key? key, required this.firstName}) : super(key: key);
 
   @override
@@ -27,7 +27,8 @@ class _HomePageState extends State<HomePage> {
       case 0:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage(firstName: widget.firstName)),
+          MaterialPageRoute(
+              builder: (context) => HomePage(firstName: widget.firstName)),
         );
         break;
       case 1:
@@ -39,7 +40,10 @@ class _HomePageState extends State<HomePage> {
       case 2:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ProfilScreen(userId: '',)),
+          MaterialPageRoute(
+              builder: (context) => const ProfilScreen(
+                    userId: '',
+                  )),
         );
         break;
       default:
@@ -168,11 +172,14 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
   Widget _buildNutritionStats() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('nutrisiPengguna')
-          .where('tgl_makan', isGreaterThanOrEqualTo: DateTime.now().subtract(const Duration(days: 1)))
+          .where('tgl_makan',
+              isGreaterThanOrEqualTo:
+                  DateTime.now().subtract(const Duration(days: 1)))
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -265,7 +272,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<Map<String, dynamic>> _fetchNutritionDetails(List<QueryDocumentSnapshot> docs) async {
+  Future<Map<String, dynamic>> _fetchNutritionDetails(
+      List<QueryDocumentSnapshot> docs) async {
     Map<String, dynamic> aggregatedData = {
       "karbohidrat": 0,
       "lemak": 0,
@@ -298,7 +306,7 @@ class _HomePageState extends State<HomePage> {
     required String label,
   }) {
     double progress = currentValue / targetValue;
-    progress = progress.clamp(0.0, 1.0); 
+    progress = progress.clamp(0.0, 1.0);
 
     return Column(
       children: [
@@ -415,7 +423,7 @@ class _HomePageState extends State<HomePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Bagian Tambah (Tombol Add)
+        // Tombol Tambah
         GestureDetector(
           onTap: () {
             showSearch(
@@ -435,11 +443,14 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        const SizedBox(height: 10), // Spasi antar widget
+        const SizedBox(height: 10),
 
-        // Bagian List Makanan (Dari Firestore)
+        // List Makanan dari Firestore
         StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('nutrisiPengguna').snapshots(),
+          stream: FirebaseFirestore.instance
+              .collection('nutrisiPengguna')
+              .orderBy('tgl_makan', descending: true)
+              .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -452,7 +463,12 @@ class _HomePageState extends State<HomePage> {
             final docs = snapshot.data!.docs;
 
             if (docs.isEmpty) {
-              return const Center(child: Text('Belum ada data makanan.'));
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text('Belum ada makanan yang ditambahkan'),
+                ),
+              );
             }
 
             return ListView.builder(
@@ -460,96 +476,152 @@ class _HomePageState extends State<HomePage> {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: docs.length,
               itemBuilder: (context, index) {
-                var item = docs[index].data() as Map<String, dynamic>;
-                String namaMakanan = item['nama'] ?? 'Makanan'; // Ambil nama makanan
-                String makananId = docs[index].id; // Ambil ID makanan
-                String imageUrl = item['imageUrl'] ?? ''; // Ambil URL gambar makanan
+                final nutrisiDoc = docs[index];
+                final makananId = nutrisiDoc.id;
+                final makananRef = nutrisiDoc.get('id') as DocumentReference;
 
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  child: ListTile(
-                    leading: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: imageUrl.isNotEmpty
-                            ? CachedNetworkImage(
-                                imageUrl: imageUrl,
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => const Center(
-                                  child: CircularProgressIndicator(),
-                                ),
-                                errorWidget: (context, url, error) => const Center(
-                                  child: Icon(Icons.broken_image, color: Colors.grey),
-                                ),
-                              )
-                            : const Center(
-                                child: Icon(Icons.fastfood, color: Colors.grey),
-                              ),
-                      ),
-                    ),
-                    title: Text(namaMakanan),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Saat menekan tombol Edit
-                        IconButton(
-                          icon: const Icon(Icons.edit, color: Colors.blue),
-                          onPressed: () async {
-                            try {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) {
-                                    // Menyediakan makananId dan makananData saat navigasi
-                                    return UpdateMakananScreen(
+                return FutureBuilder<DocumentSnapshot>(
+                  future: makananRef.get(),
+                  builder: (context, makananSnapshot) {
+                    if (makananSnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return const Card(
+                        child: ListTile(
+                          leading: CircularProgressIndicator(),
+                          title: Text('Memuat...'),
+                        ),
+                      );
+                    }
+
+                    if (!makananSnapshot.hasData ||
+                        !makananSnapshot.data!.exists) {
+                      return const SizedBox();
+                    }
+
+                    final makananData =
+                        makananSnapshot.data!.data() as Map<String, dynamic>;
+                    final namaMakanan =
+                        makananData['nama_makanan'] ?? 'Tidak ada nama';
+                    final imageUrl = makananData['img'] ?? '';
+
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 4),
+                      elevation: 2,
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.all(8),
+                        leading: Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: imageUrl.isNotEmpty
+                                ? CachedNetworkImage(
+                                    imageUrl: imageUrl,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        const Center(
+                                      child: Icon(Icons.broken_image,
+                                          color: Colors.grey),
+                                    ),
+                                  )
+                                : const Icon(Icons.fastfood,
+                                    color: Colors.grey, size: 30),
+                          ),
+                        ),
+                        title: Text(
+                          namaMakanan,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        subtitle: Text(
+                          'Ditambahkan: ${_formatDate(nutrisiDoc['tgl_makan'].toDate())}',
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UpdateMakananScreen(
                                       makananId: makananId,
-                                      makananData: item,
-                                    );
-                                  },
-                                ),
-                              );
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Makanan berhasil diperbarui.')),
-                              );
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Gagal memperbarui makanan: $e')),
-                              );
-                            }
-                          },
+                                      makananData: makananData,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => _confirmDelete(makananId),
+                            ),
+                          ],
                         ),
-                        // Saat menekan tombol Delete
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () async {
-                            try {
-                              // Menghapus item dari Firestore berdasarkan ID
-                              await FirebaseFirestore.instance.collection('nutrisiPengguna').doc(makananId).delete();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Makanan berhasil dihapus.')),
-                              );
-                            } catch (e) {
-                              // Menangani error jika ada masalah penghapusan
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Gagal menghapus item: $e')),
-                              );
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
+                      ),
+                    );
+                  },
                 );
               },
             );
           },
         ),
       ],
+    );
+  }
+
+  // Tambahkan fungsi helper untuk format tanggal
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute}';
+  }
+
+  // Tambahkan fungsi untuk konfirmasi penghapusan
+  void _confirmDelete(String makananId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Konfirmasi Hapus'),
+          content: const Text('Apakah Anda yakin ingin menghapus makanan ini?'),
+          actions: [
+            TextButton(
+              child: const Text('Batal'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: const Text('Hapus', style: TextStyle(color: Colors.red)),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                try {
+                  await FirebaseFirestore.instance
+                      .collection('nutrisiPengguna')
+                      .doc(makananId)
+                      .delete();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Makanan berhasil dihapus')),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Gagal menghapus makanan: $e')),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
