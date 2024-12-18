@@ -5,7 +5,8 @@ import 'package:ns_apps/screens/profil_screen.dart';
 import 'package:ns_apps/screens/articles.dart';
 import 'package:ns_apps/screens/searchView_screen.dart';
 import 'package:ns_apps/screens/searchDetail_screen.dart';
-import 'package:ns_apps/screens/edit_delete_screen.dart';
+import 'package:ns_apps/screens/update_screen.dart';
+import 'package:ns_apps/screens/delete_screen.dart';
 import '../constants/colors.dart';
 import '../constants/images.dart';
 
@@ -43,6 +44,15 @@ class _HomePageState extends State<HomePage> {
       default:
         return;
     }
+  }
+
+  void tambahMakanan(String namaMakanan) {
+    FirebaseFirestore.instance.collection('nutrisiPengguna').add({
+      'nama': namaMakanan,
+      'tgl_makan': DateTime.now(),
+    }).then((value) {
+      Navigator.pop(context); // Kembali ke HomePage
+    });
   }
 
   @override
@@ -151,7 +161,7 @@ class _HomePageState extends State<HomePage> {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('nutrisiPengguna')
-          .where('time', isGreaterThanOrEqualTo: DateTime.now().subtract(const Duration(days: 1)))
+          .where('tgl_makan', isGreaterThanOrEqualTo: DateTime.now().subtract(const Duration(days: 1)))
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -391,15 +401,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildMealSection() {
-    return Builder(
-      builder: (BuildContext context) {
-        return GestureDetector(
-        onTap: () {
-          showSearch(
-          context: context,
-          delegate: MakananSearchDelegate(),
-          );
-        },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Bagian Tambah (Tombol Add)
+        GestureDetector(
+          onTap: () {
+            showSearch(
+              context: context,
+              delegate: MakananSearchDelegate(),
+            );
+          },
           child: Container(
             height: 50,
             width: 50,
@@ -411,8 +423,91 @@ class _HomePageState extends State<HomePage> {
               child: Icon(Icons.add, color: Colors.green),
             ),
           ),
-        );
-      },
+        ),
+        const SizedBox(height: 10), // Spasi antar widget
+
+        // Bagian List Makanan (Dari Firestore)
+        StreamBuilder<QuerySnapshot>(
+          stream:
+              FirebaseFirestore.instance.collection('nutrisiPengguna').snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+
+            final docs = snapshot.data!.docs;
+
+            if (docs.isEmpty) {
+              return const Center(child: Text('Belum ada data makanan.'));
+            }
+
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: docs.length,
+              itemBuilder: (context, index) {
+                var item = docs[index].data() as Map<String, dynamic>;
+                String namaMakanan = item['nama'] ?? 'Makanan';
+                String id = docs[index].id;
+
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ListTile(
+                    leading: const Icon(Icons.fastfood, color: Colors.green),
+                    title: Text(namaMakanan),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Saat menekan tombol Edit
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.blue),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  // Mengambil data makanan dari Firestore
+                                  var item = docs[index].data() as Map<String, dynamic>;
+                                  String makananId = docs[index].id;
+                                  // Menyediakan makananId dan makananData saat navigasi
+                                  return UpdateMakananScreen(
+                                    makananId: makananId,
+                                    makananData: item,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                        // Saat menekan tombol Delete
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  String makananId = docs[index].id;
+                                  // Menyediakan makananId saat navigasi ke DeleteMakananScreen
+                                  return DeleteMakananScreen(makananId: makananId);
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ],
     );
   }
 }
