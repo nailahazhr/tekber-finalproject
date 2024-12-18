@@ -1,33 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../constants/colors.dart';
 import '../constants/images.dart';
+import 'package:ns_apps/screens/profil_screen.dart';
 import 'package:ns_apps/screens/home_page.dart';
 
 class PersonalisasiScreen extends StatefulWidget {
-  const PersonalisasiScreen({super.key, this.title, required String name, required String firstName});
+  const PersonalisasiScreen({
+    super.key,
+    this.title,
+    required this.name,
+    required this.firstName,
+    required String email,
+  });
 
   final String? title;
+  final String name; // Parameter untuk nama
+  final String firstName;
 
   @override
   State<PersonalisasiScreen> createState() => _PersonalisasiScreenState();
 }
 
-
 class _PersonalisasiScreenState extends State<PersonalisasiScreen> {
+  // Dropdown selections
   String? pilihJenisKelamin;
   List<String> jenisKelamin = ['Perempuan', 'Laki-Laki'];
   String? pilihAktivitas;
   List<String> jenisAktivitas = ['Sangat Ringan', 'Ringan', 'Sedang', 'Berat'];
-  @override
+
+  // TextEditingControllers untuk input
+  final TextEditingController umurController = TextEditingController();
+  final TextEditingController tinggiBadanController = TextEditingController();
+  final TextEditingController beratBadanController = TextEditingController();
+
   Widget _entryFieldPersonalisasi(
-      String title, {
-        bool isPassword = false,
-        bool isDropdown = false,
-        Image? prefixImage,
-        List<String>? dropdownItems,
-        String? selectedItem,
-        ValueChanged<String?>? onChanged,
-      }) {
+    String title, {
+    bool isPassword = false,
+    bool isDropdown = false,
+    Image? prefixImage,
+    List<String>? dropdownItems,
+    String? selectedItem,
+    ValueChanged<String?>? onChanged,
+    TextEditingController? controller,
+  }) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -43,20 +59,19 @@ class _PersonalisasiScreenState extends State<PersonalisasiScreen> {
           ),
           const SizedBox(height: 10),
           isDropdown && dropdownItems != null
-              ? _buildDropdownField(
-              prefixImage, dropdownItems, selectedItem, onChanged)
-              : _buildTextField(prefixImage, isPassword),
+              ? _buildDropdownField(prefixImage, dropdownItems, selectedItem, onChanged)
+              : _buildTextField(prefixImage, isPassword, controller),
         ],
       ),
     );
   }
 
   Widget _buildDropdownField(
-      Image? prefixImage,
-      List<String> dropdownItems,
-      String? selectedItem,
-      ValueChanged<String?>? onChanged,
-      ) {
+    Image? prefixImage,
+    List<String> dropdownItems,
+    String? selectedItem,
+    ValueChanged<String?>? onChanged,
+  ) {
     return DropdownButtonFormField<String>(
       value: selectedItem,
       onChanged: onChanged,
@@ -70,9 +85,10 @@ class _PersonalisasiScreenState extends State<PersonalisasiScreen> {
     );
   }
 
-  Widget _buildTextField(Image? prefixImage, bool isPassword) {
+  Widget _buildTextField(Image? prefixImage, bool isPassword, TextEditingController? controller) {
     return TextField(
       obscureText: isPassword,
+      controller: controller,
       decoration: _inputDecoration(prefixImage),
     );
   }
@@ -81,10 +97,10 @@ class _PersonalisasiScreenState extends State<PersonalisasiScreen> {
     return InputDecoration(
       prefixIcon: prefixImage != null
           ? Container(
-        width: 48,
-        padding: const EdgeInsets.all(8),
-        child: prefixImage,
-      )
+              width: 48,
+              padding: const EdgeInsets.all(8),
+              child: prefixImage,
+            )
           : null,
       fillColor: tWhiteColor,
       filled: true,
@@ -99,18 +115,29 @@ class _PersonalisasiScreenState extends State<PersonalisasiScreen> {
     );
   }
 
-
   Widget _title() {
-    return Container(
-      child: const Text(
-        "Personalisasi",
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: 25,
-          color: tThirdColor,
-          fontWeight: FontWeight.bold,
+    return Column(
+      children: [
+        Text(
+          "Personalisasi",
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 25,
+            color: tThirdColor,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
+        const SizedBox(height: 10),
+        Text(
+          'Halo, ${widget.firstName}! Bantu kami mengenal dirimu lebih baik.',
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            color: tGreyColor,
+          ),
+        ),
+      ],
     );
   }
 
@@ -120,14 +147,17 @@ class _PersonalisasiScreenState extends State<PersonalisasiScreen> {
         _entryFieldPersonalisasi(
           "Umur (tahun)",
           prefixImage: Image.asset(tUmurIcon),
+          controller: umurController,
         ),
         _entryFieldPersonalisasi(
           "Tinggi Badan (cm)",
           prefixImage: Image.asset(tTinggiBadanIcon),
+          controller: tinggiBadanController,
         ),
         _entryFieldPersonalisasi(
           "Berat Badan (kg)",
           prefixImage: Image.asset(tBeratBadanIcon),
+          controller: beratBadanController,
         ),
         _entryFieldPersonalisasi(
           "Jenis Kelamin",
@@ -156,12 +186,26 @@ class _PersonalisasiScreenState extends State<PersonalisasiScreen> {
       ],
     );
   }
+
   Widget _submitButton() {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
+        // Simpan data ke Firestore
+        await FirebaseFirestore.instance.collection('personal').doc(widget.name).set({
+          'nama': widget.name,
+          'umur': umurController.text,
+          'tbadan': tinggiBadanController.text,
+          'bbadan': beratBadanController.text,
+          'kelamin': pilihJenisKelamin,
+          'aktivitas': pilihAktivitas,
+        });
+
+        // Navigasi ke HomePage
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage(firstName: '',)),
+          MaterialPageRoute(
+            builder: (context) => HomePage(firstName: widget.name),
+          ),
         );
       },
       child: Container(
@@ -187,72 +231,35 @@ class _PersonalisasiScreenState extends State<PersonalisasiScreen> {
     );
   }
 
-  Widget _loginAccountLabel() {
-    return InkWell(
-      // onTap: () {
-      //   Navigator.push(
-      //       context, MaterialPageRoute(builder: (context) => LoginPage()));
-      // },
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 20),
-        // padding: EdgeInsets.all(15),
-        alignment: Alignment.bottomCenter,
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Apakah sudah memiliki akun ?',
-              style: TextStyle(color: tGreyColor, fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Text(
-              'Masuk',
-              style: TextStyle(
-                  color: tSecondaryColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
-        backgroundColor: tWhiteColor,
-        body: SizedBox(
-          height: height,
-          child: Stack(
-            children: <Widget>[
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(height: height * .1),
-                      _title(),
-                      const Text(
-                        'Bantu kami mengenal dirimu lebih baik',
-                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: tGreyColor),
-                      ),
-                      const SizedBox(height: 30),
-                      _personalisasiWidget(),
-                      const SizedBox(height: 20),
-                      _submitButton(),
-                      _loginAccountLabel(),
-                    ],
-                  ),
+      backgroundColor: tWhiteColor,
+      body: SizedBox(
+        height: height,
+        child: Stack(
+          children: <Widget>[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(height: height * .1),
+                    _title(),
+                    const SizedBox(height: 30),
+                    _personalisasiWidget(),
+                    const SizedBox(height: 20),
+                    _submitButton(),
+                  ],
                 ),
               ),
-            ],
-          ),
-        )
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

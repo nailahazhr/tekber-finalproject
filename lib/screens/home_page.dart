@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
       case 2:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ProfilScreen()),
+          MaterialPageRoute(builder: (context) => const ProfilScreen(userId: '',)),
         );
         break;
       default:
