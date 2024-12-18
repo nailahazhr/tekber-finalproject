@@ -75,14 +75,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
         // Ekstrak nama awal dari email
         String firstName = email.contains('@') ? email.split('@')[0] : email;
 
+        // Registrasi menggunakan Firebase Auth
         User? user = await _authService.signUpWithEmailAndPassword(email, password);
         if (user != null) {
+          // Navigasi ke PersonalizationScreen dengan data
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => PersonalisasiScreen(
                 name: name,
                 firstName: firstName,
+                email: email,
               ),
             ),
           );
