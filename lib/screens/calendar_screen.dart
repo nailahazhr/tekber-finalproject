@@ -52,7 +52,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               _selectedDay = selectedDate; 
             });
           },
-          activeColor: tSecondaryColor,
+          activeColor: tThirdColor,
         ),
         const SizedBox(height: 20),
         StreamBuilder<QuerySnapshot>(
