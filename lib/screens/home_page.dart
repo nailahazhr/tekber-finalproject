@@ -7,7 +7,6 @@ import 'package:ns_apps/screens/articles.dart';
 import 'package:ns_apps/screens/searchView_screen.dart';
 import 'package:ns_apps/screens/searchDetail_screen.dart';
 import 'package:ns_apps/screens/update_screen.dart'; 
-import 'package:ns_apps/screens/delete_screen.dart';
 import '../constants/colors.dart';
 import '../constants/images.dart';
 
@@ -523,21 +522,40 @@ class _HomePageState extends State<HomePage> {
                             }
                           },
                         ),
-                        // Saat menekan tombol Delete
                         IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
                           onPressed: () async {
-                            try {
-                              // Menghapus item dari Firestore berdasarkan ID
-                              await FirebaseFirestore.instance.collection('nutrisiPengguna').doc(makananId).delete();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Makanan berhasil dihapus.')),
-                              );
-                            } catch (e) {
-                              // Menangani error jika ada masalah penghapusan
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Gagal menghapus item: $e')),
-                              );
+                            bool? confirmDelete = await showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Hapus Makanan'),
+                                content: const Text('Apakah Anda yakin ingin menghapus makanan ini?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, false), // Tidak hapus
+                                    child: const Text('Batal'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, true), // Konfirmasi hapus
+                                    child: const Text('Hapus'),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            if (confirmDelete == true) {
+                              try {
+                                // Menghapus item dari Firestore berdasarkan ID
+                                await FirebaseFirestore.instance.collection('nutrisiPengguna').doc(makananId).delete();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Makanan berhasil dihapus.')),
+                                );
+                              } catch (e) {
+                                // Menangani error jika ada masalah penghapusan
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Gagal menghapus item: $e')),
+                                );
+                              }
                             }
                           },
                         ),
